@@ -18,7 +18,8 @@
                 <label>Chọn conversation demo:</label>
                 <select id="demoSelect" aria-label="Chọn conversation demo">
                     <option value="case1">C0025 T0708 — Happy path (có citations)</option>
-                    <option value="case2">C0096 T0558 — Edge case (mơ hồ)</option>
+                    <option value="case2">C0096 T0558 — Happy path (5 trụ cột, để test lớp ④)</option>
+                    <option value="case3">C0220 T0939 — Lớp ① (citations=[], không đủ căn cứ)</option>
                 </select>
 
                 <div id="chatArea" class="chatArea">
@@ -27,7 +28,10 @@
 
                 <div id="quickCheck" class="quick-check hidden">
                     <button id="triggerCheck">Kiểm tra nhanh xem bạn hiểu đúng chưa?</button>
-                    <div class="small-note">Tuỳ chọn — có thể bỏ qua.</div>
+                    <div class="small-note">Tuỳ chọn — có thể bỏ qua (G8).</div>
+                </div>
+                <div id="noEvidenceNote" class="no-evidence-note hidden">
+                    ❌ Turn này không có đoạn tài liệu rõ ràng (<code>citations=[]</code>) — không thể tạo bài kiểm tra nhanh cho phần này (lớp ①, xem spec §5).
                 </div>
             </div>
 
@@ -42,14 +46,22 @@
                 <label>Trả lời của học viên (1-2 câu):</label>
                 <textarea id="studentAnswer" placeholder="Viết câu trả lời bằng lời của bạn..."></textarea>
 
+                <label>Test nhanh case golden set (điền sẵn để mock test lớp ②③④):</label>
+                <div class="presets" id="presets">
+                    <button type="button" class="preset-btn" data-preset="vague">② Mơ hồ</button>
+                    <button type="button" class="preset-btn" data-preset="offscope">③ Đòi điểm</button>
+                    <button type="button" class="preset-btn" data-preset="misconception">④ Sai bản chất</button>
+                    <button type="button" class="preset-btn" data-preset="correct">✅ Hiểu đúng</button>
+                </div>
+
                 <div class="buttons">
                     <button id="submitAnswer">Nộp trả lời</button>
                     <button id="resetCheck">Bỏ qua / Đặt lại</button>
                 </div>
 
                 <div class="settings">
-                    <label>API key (tùy chọn, dán nếu muốn dùng OpenAI thực):</label>
-                    <input id="apiKey" placeholder="sk-... (optional)" />
+                    <input id="apiKey" type="hidden" />
+                    <div id="apiKeyStatus" class="key-status">🔑 Đang kiểm tra key từ .env...</div>
                     <label><input type="checkbox" id="enableLogs" /> Lưu log lần chạy (local)</label>
                 </div>
             </div>
@@ -65,10 +77,43 @@
         </div>
 
         <hr />
-        <p class="note">Ghi chú: Đây là prototype CP2 — kết quả có thể là dữ liệu giả để minh họa flow (không cần AI cho
-            CP2).</p>
+        <p class="note">Ghi chú: Đây là prototype Mock theo spec §4 — UI + data hội thoại lấy nguyên văn từ chatlog
+            thật (dán cứng), lõi sinh câu hỏi + chấm là AI call thật khi dán API key, có fallback mô phỏng khi không
+            có key để mock test được ngay. Case 3 minh hoạ lớp ① (không đủ căn cứ); dùng nút preset để mock test lớp
+            ②③④ trên case 1/2 mà không cần gõ tay.</p>
+
+        <hr />
+        <div class="panel golden-panel">
+            <h2>Golden set — 20 case (spec §7)</h2>
+            <p class="small-note">Chạy toàn bộ 20 case của golden set qua đúng logic chấm đang dùng ở trên (fallback
+                mô phỏng nếu không có API key, gọi AI thật tuần tự nếu có key). Kết quả so với cột "Kỳ vọng" lấy
+                nguyên từ bảng golden set trong <code>03-ai-spec.md</code> §7.</p>
+            <div class="buttons">
+                <button id="runGoldenSet">▶ Chạy toàn bộ (dùng key nếu có)</button>
+                <button id="downloadGoldenResults" class="hidden">Tải kết quả (JSON) → eval/</button>
+            </div>
+            <div id="goldenSummary" class="golden-summary"></div>
+            <div class="table-wrap">
+                <table id="goldenTable" class="golden-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nguồn</th>
+                            <th>Lớp</th>
+                            <th>Loại</th>
+                            <th>Input tóm tắt</th>
+                            <th>Kỳ vọng</th>
+                            <th>Thực tế</th>
+                            <th>Đạt?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="goldenTableBody"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
+    <script src="env.js"></script>
     <script src="app.js"></script>
 </body>
 

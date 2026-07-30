@@ -27,14 +27,31 @@ button#clearBtn{background:#ff6b6b;color:#fff}
 .result-panel .result{min-height:120px}
 .explain{margin-top:10px;color:#cde8ff;background:#041726;padding:10px;border-radius:6px;border:1px solid #12303a}
 .settings{margin-top:10px;font-size:13px;color:#9fb2bb}
+.key-status{padding:8px 10px;border-radius:6px;background:#071216;border:1px solid #25353f;margin-bottom:8px}
+.key-status.key-ok{color:#8ef0a3;border-color:#2a5a3a}
 .small-note{font-size:12px;color:#9fb2bb;margin-top:6px}
 .badge{display:inline-block;padding:8px 12px;border-radius:8px;color:#05151a;font-weight:600}
 .badge.good{background:linear-gradient(90deg,#c6f6d5,#8ef0a3)}
 .badge.warn{background:linear-gradient(90deg,#fff3bf,#ffd86b)}
 .badge.bad{background:linear-gradient(90deg,#ffd6d6,#ff8b8b)}
 .badge.processing{background:linear-gradient(90deg,#cfe9ff,#8fd4ff);color:#002433}
+.badge.scope{background:linear-gradient(90deg,#e0c3ff,#c39bff);color:#1a0533}
+.no-evidence-note{margin-top:10px;padding:10px;border-radius:8px;background:#2a1414;border:1px solid #5a2323;color:#ffb3b3;font-size:13px}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.preset-btn{background:#1c2c36;color:#cde8ff;border:1px solid #2b4552;padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer}
+.preset-btn:hover{background:#25404e}
 .chat-panel .chatMsg{position:relative;padding-bottom:28px}
 .chat-panel .chatMsg .meta{position:absolute;right:10px;top:8px;font-size:12px}
 .quick-check{margin-top:8px}
 .quick-check button{background:#ffd86b;color:#062;padding:10px 12px;border-radius:8px}
 .quick-check .small-note{margin-top:6px}
+
+/* Golden set panel */
+.golden-panel{flex:none}
+.golden-summary{margin:10px 0}
+.table-wrap{overflow-x:auto;margin-top:8px}
+.golden-table{width:100%;border-collapse:collapse;font-size:13px}
+.golden-table th,.golden-table td{padding:8px;border-bottom:1px solid #17303a;text-align:left;vertical-align:top}
+.golden-table th{color:#9fb2bb;font-weight:600;background:#0b141b;position:sticky;top:0}
+.golden-table tr.row-fail{background:rgba(255,139,139,0.08)}
+.golden-table tr.row-hardfail{background:rgba(255,80,80,0.18)}
