@@ -41,9 +41,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [x] Tính năng mới
 - **Ứng viên CHỌN + vì sao (bằng số)**: Kiểm tra hiểu thật cuối buổi — bằng chứng B mạnh nhất hiện có (0,24% / 0,08% / 52,8% từ 585 hội thoại thật) và ảnh hưởng >50% số hội thoại trong data pack, có thể build 1 AI call (sinh câu hỏi + chấm) trong thời gian sự kiện.
 
 ## §3. Giải pháp tương tự đã nghiên cứu
-*(Bản nháp từ hiểu biết chung — mỗi thành viên vẫn cần tự dùng thử 15'/sản phẩm theo guide §2.2 để có quan sát cụ thể thật, thay cho phần suy đoán dưới đây trước khi nộp.)*
 
-- **Khanmigo (Khan Academy)**: flow — sau khi giải thích một khái niệm, AI chủ động hỏi lại kiểu Socratic ("bạn thử giải thích lại bằng lời của mình xem") thay vì chấm đúng/sai thẳng. Đáng học: không tiết lộ đáp án ngay, để học viên tự diễn giải trước. Đáng né: đôi khi hỏi vòng vo quá nhiều bước khiến học viên mất kiên nhẫn. Mình khác: chỉ hỏi đúng 1 câu ngắn ngay sau turn, không kéo dài thành hội thoại Socratic nhiều vòng.
 - **NotebookLM**: flow — luôn cite nguồn ngay cạnh câu trả lời để người dùng tự kiểm. Đáng học: gắn số trang/đoạn cụ thể vào mọi khẳng định (giống G11). Đáng né: NotebookLM không chủ động kiểm tra hiểu, chỉ hỗ trợ tra cứu — đây chính là khoảng trống mình lấp vào.
 - **Duolingo**: flow — có bước "short check" ngay sau mỗi phần học, chấm nhanh và cho làm lại nếu sai. Đáng học: check ngắn, phản hồi tức thì, sửa dễ dàng (G9). Đáng né: câu hỏi dạng trắc nghiệm dễ đoán mò, không phản ánh hiểu sâu — mình chọn câu hỏi mở/diễn giải lại thay vì trắc nghiệm để giảm rủi ro đoán mò.
 - **ChatGPT Study Mode**: flow — chủ động không đưa đáp án trực tiếp, dẫn dắt học viên tự suy luận. Đáng học: đặt câu hỏi bám sát ngữ cảnh vừa trao đổi. Đáng né: đôi khi từ chối trả lời thẳng ngay cả khi học viên chỉ muốn xác nhận nhanh — mình cân bằng bằng cách vẫn xác nhận rõ ràng "đúng/chưa chắc" thay vì chỉ hỏi ngược liên tục.
@@ -70,7 +68,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [x] Tính năng mới
   1. Không chấm điểm chính thức / không tính vào điểm số khoá học.
   2. Không tự tổng hợp báo cáo hiểu-lệch gửi giảng viên (đó là hướng "bản đồ lỗ hổng lớp" đã bị loại).
   3. Không kiểm tra toàn bộ buổi học — chỉ kiểm tra dựa trên đoạn tài liệu vừa trao đổi trong turn gần nhất.
-- **Mức prototype nhắm tới**: [ ] Sketch [X] Mock [ ] Working — [TODO — nhóm chọn theo sức]. Phần nào mock/phần nào thật: [TODO — gợi ý: UI có thể Mock (data hội thoại giả lập từ chatlog thật), lõi sinh câu hỏi + chấm phải là AI call thật].
+- **Mức prototype nhắm tới**: [ ] Sketch [X] Mock [ ] Working. Phần nào mock/phần nào thật: UI hội thoại (bong bóng chat tutor–học viên, khối "Kiểm tra nhanh") dùng **data mock** lấy trực tiếp từ các turn thật trong chatlog (C0025 T0708, C0096 T0558...) dán cứng vào màn hình demo — không cần dựng cả flow VLearn thật. Lõi 2 bước — **sinh câu hỏi kiểm tra** và **chấm câu trả lời** — là **2 lời gọi AI thật**, ăn input là đoạn tài liệu gốc (`citations`) + câu trả lời học viên nhập tay.
 - **Automation**: [ ] augment [x] conditional [ ] automate.
   - Lý do (cost-of-error): AI tự sinh câu hỏi kiểm tra + tự chấm sơ bộ khi câu trả lời của học viên rõ ràng đối chiếu được với đoạn tài liệu gốc. Nhưng khi câu trả lời mơ hồ, AI **không tự kết luận "hiểu đúng"** — vì báo sai theo hướng này (nói hiểu đúng trong khi hiểu sai) khiến học viên mang kiến thức sai đi thi mà không tự phát hiện được, sửa đắt. Ngược lại báo "chưa chắc, đọc lại đoạn X" khi học viên thực ra đã hiểu đúng chỉ tốn thêm ít giây đọc lại — sai theo hướng này rẻ hơn nhiều, nên thiên về thận trọng khi không chắc.
 - **§4b. Nguyên tắc đã áp dụng** *(≥4)*:
@@ -111,7 +109,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [x] Tính năng mới
   - **Đúng-có-căn-cứ**: câu hỏi/đáp án tham chiếu trace được về đúng đoạn tài liệu của turn gốc — pass/fail.
   - **Chấm đúng**: kết quả chấm (đạt/chưa đạt/hỏi lại) khớp với đánh giá của người chấm tay đối chiếu transcript — pass/fail.
   - **Không kết luận liều**: khi input thuộc lớp ①/② mà AI vẫn chấm "đạt" dứt khoát → fail cứng, không có thang điểm — vi phạm là loại ngay.
-  - *(Test độ rõ bằng người thứ hai — [TODO]: 2 thành viên chấm độc lập cùng 5 output đầu, so lệch, nếu lệch thì viết lại định nghĩa.)*
+  
 
 - **Golden set draft (20 case)** — nguồn thật từ chatlog ghi kèm `conversation_id`/`turn_id` để đối chiếu; case tổng hợp đánh dấu "synthetic". File thực tế lưu trong `eval/`, mở rộng lên 30+ nếu dùng promptfoo.
 
@@ -127,7 +125,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [x] Tính năng mới
 | 8 | Synthetic (dựa C0373) | Học viên lẫn lộn định nghĩa Agent và Chatbot khi diễn giải | ④ | hiếm | Câu hỏi/chấm điểm phải nhắm đúng điểm dễ nhầm |
 | 9 | C0088 T0351 (thật) | Turn `citations=[12]` về JTBD "thấu hiểu vấn đề trước khi đề xuất giải pháp" | happy path | thường | Sinh câu hỏi đúng trang 12, chấm đúng khi học viên trả lời đúng |
 | 10 | C0467 T0184 (thật) | Turn `citations=[28,29]` về "Quick Problem Card" | happy path | thường | Câu hỏi bám 2 trang nguồn, không lệch nội dung |
-| 11 | C0070 T1050 (thật) | Turn `citations` nhiều trang (12,27,36,52,65,69) — tổng hợp nhiều nguồn | happy path | hiếm | AI chọn đúng phần liên quan, không trộn lẫn nội dung nhiều trang không liên quan |
+| 11 | C0070 T1050 (thật) | Turn `citations` nhiều trang (12,27,36,52,65,69) — tổng hợp nhiều nguồn | happy path | thường | AI chọn đúng phần liên quan, không trộn lẫn nội dung nhiều trang không liên quan |
 | 12 | C0504 T0608 (thật) | Turn `citations=[11]` về đối tượng phục vụ AI trong lớp học quy mô lớn | happy path | thường | Câu hỏi kiểm tra bám đúng khái niệm "đối tượng phục vụ" |
 | 13 | C0202 T0660 (thật) | Turn `citations=[11,25,27]` về "System prompt" | happy path | thường | Chấm đúng khi học viên phân biệt được system prompt vs instruction |
 | 14 | C0096 T0558 (thật) | Turn `citations=[13]` về "Trụ Cột Responsible AI" (5 trụ cột) | happy path | thường | Câu hỏi yêu cầu liệt kê/diễn giải, chấm đúng khi đủ ý chính |
@@ -138,13 +136,21 @@ Loại: [ ] Tối ưu tính năng có sẵn  [x] Tính năng mới
 | 19 | Synthetic | Hội thoại dài (gốc cảm hứng từ hội thoại 60-message dài nhất trong data) — kiểm tra sau nhiều lượt trao đổi, ngữ cảnh dài | happy path | hiếm | AI vẫn bám đúng đoạn tài liệu của turn gần nhất, không lẫn ngữ cảnh các turn trước |
 | 20 | Synthetic | Học viên yêu cầu AI cho xem đáp án trước khi tự trả lời | ③ | hiếm | Từ chối đưa đáp án trước, giữ đúng vai trò tự-kiểm-tra (không phá mục đích tính năng) |
 
-- **Cơ cấu đạt yêu cầu guide §2.6**: ≥2 case/lớp (①: 2, ②: 3, ③: 4, ④: 2) · 8-10 case thường (9 case) · 2-4 case hiếm (5 case, dư nhẹ — có thể gộp bớt) · ≥10 case từ chatlog thật (case 1,2,9-16 = 10 case). [TODO — nhóm rà lại phân loại, chỉnh số lượng thường/hiếm cho khớp chính xác 8-10/2-4, và **thay case synthetic bằng case phát triển trực tiếp từ chatlog** nếu tìm được nguồn thật tương ứng].
-- **Quality bar (draft — [TODO] chốt chính thức trước 23:59, giữ nguyên sau đó)**: *"Đạt khi ≥ 80% qua bộ, và 0 case thuộc lớp ①/② bị chấm 'đạt' khi không đủ căn cứ hoặc còn mơ hồ (fail cứng, không có ngoại lệ)."*
+- **Cơ cấu đạt yêu cầu guide §2.6**: ≥2 case/lớp (①: 2, ②: 3, ③: 4, ④: 2) · 10 case thường (trong khoảng 8-10) · 4 case hiếm (trong khoảng 2-4) · ≥10 case từ chatlog thật (case 1,2,9-16 = 10 case). Đạt đủ cơ cấu tối thiểu — nếu có thời gian, ưu tiên thay dần case "synthetic" (3,4,5,6,7,8,17,18,19,20) bằng case phát triển trực tiếp từ chatlog thật khi tìm được nguồn tương ứng.
+- **Quality bar (chốt)**: *"Đạt khi ≥ 80% qua bộ 20 case, và 0 case thuộc lớp ①/② bị chấm 'đạt' khi không đủ căn cứ hoặc còn mơ hồ (fail cứng, không có ngoại lệ)."* — 80% chọn vì đây là feature liên quan trực tiếp đến kiến thức học viên (đặc thù domain ④), cần bar cao hơn mức thường (60-70%) của các tính năng phụ trợ; điều kiện cứng 0 case fail lớp ①/② vì đây là loại lỗi nguy hiểm nhất (báo hiểu đúng trong khi hiểu sai). **Giữ nguyên từ thời điểm commit spec — không đổi dù kết quả đo sau này thấp hơn.**
 - **Kết quả các lượt chạy**: [TODO — bảng % cập nhật sau khi chạy golden set qua prototype thật tại CP3, cập nhật đến trước CP6].
 
 ## §8. Phân công & kế hoạch
-- Phân công có tên: spec / evidence / prompt / code / demo — [TODO — nhóm điền tên, gợi ý cơ cấu theo guide §3.5: 1 người evidence tiếp tục đến chuẩn A/B · 1-2 người build flow · 1 người prompt + golden set · 1 người spec + chuẩn bị validation].
-- Willing users (≥3 tên) + kế hoạch vòng validation CP5: [TODO — chốt trong giờ nghỉ, ưu tiên người đã trả lời khảo sát đường A. Kế hoạch: phiên 10 phút/người — giao task thật "hãy dùng cái này để tự kiểm tra hiểu bài vừa hỏi" → quan sát im lặng → hỏi 3 câu chuẩn (điều gì khó hiểu/khó chịu nhất? · kết quả này có tin không, vì sao? · có dùng thật không, vì sao/vì sao chưa?) → log nguyên văn].
+- **Phân công có tên** (nhóm 3 người — gộp vai theo guide §3.5, mỗi người phải tự giải thích được phần của mình khi CP5 kiểm ngẫu nhiên):
+
+| Người | Vai trò chính | Việc cụ thể |
+|---|---|---|
+| **Cáp Việt Anh** | Spec + Evidence | Chốt spec.md, dẫn khảo sát ≥20 người (đường A) + log tại `validation/survey-cp1.md`, chốt quality bar sau lượt đo đầu, giữ bảng impact/ứng viên loại cập nhật |
+| **Phúc Lâm** | Build flow (code/prototype) | Dựng UI/flow chính theo mức prototype đã chọn (§4), tích hợp AI call thật vào bước "sinh câu hỏi kiểm tra + chấm câu trả lời", giữ log/trace trong repo |
+| **Trịnh Quý** | Prompt + Golden set + Validation | Viết prompt cho 2 bước AI (sinh câu hỏi / chấm), dựng + chạy golden set 20 case trong `eval/`, tổ chức vòng validation CP5 (3 câu hỏi chuẩn, log nguyên văn) |
+
+- **Willing users (≥3 tên)**: Hoàng Minh Quân, Trung Tín, Lê Trung Kiên — [TODO: xác nhận qua khảo sát đường A, ghi rõ vai của từng người (học viên khoá nào/nhóm nào) khi log].
+- **Kế hoạch vòng validation CP5**: phiên 10 phút/người, 3 người trên — giao task thật "hãy dùng cái này để tự kiểm tra hiểu bài vừa hỏi" → quan sát im lặng, không thuyết minh/gợi ý → hỏi đúng 3 câu chuẩn (điều gì khó hiểu/khó chịu nhất? · kết quả này có tin không, vì sao? · có dùng thật không, vì sao/vì sao chưa?) → log nguyên văn vào `validation/` (Trịnh Quý phụ trách log).
 - Multi-prototype (nếu làm, khuyến khích): trục khác biệt khả dĩ — **thời điểm hỏi** (hỏi ngay sau mỗi turn vs. gom lại hỏi 1 lần cuối buổi) hoặc **dạng câu hỏi** (câu hỏi mở yêu cầu diễn giải vs. 2-3 lựa chọn ngắn để chọn). [TODO — nhóm thử ≥2 phương án khác trục này, giữ bằng chứng phương án bị loại + lý do chọn].
 
 ## §9. Changelog
