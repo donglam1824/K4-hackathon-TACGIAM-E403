@@ -158,3 +158,4 @@ Loại: [ ] Tối ưu tính năng có sẵn  [x] Tính năng mới
 |---|---|---|
 | [ngày] | Bản nháp §1-§2 dựng từ mining chatlog thật | Khởi tạo spec theo `02-guide.md` §1-§2 |
 | [ngày] | Bổ sung §3 (giải pháp tương tự), §4 giải pháp sơ bộ + sửa lát cắt MỘT CÂU đúng format 4 phần, §7 golden set draft 20 case + quality bar draft | Hoàn thiện spec §1-§7 theo template; lát cắt cũ vi phạm lỗi "hai quyết định AI" so với chuẩn slide |
+| [ngày] | Phân công §8 (3 người), willing users, chốt mức prototype (Mock), phần mock/thật, chốt quality bar (≥80% + fail cứng lớp ①②), sửa cơ cấu golden set về đúng 10 thường/4 hiếm | Điền các quyết định thiết kế của nhóm; evidence thật (khảo sát 20 người, kết quả đo, quote validation) vẫn để `[TODO]` — không bịa vì đây là phần chấm điểm bằng chứng, phải là log thật |
