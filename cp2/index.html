@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>CP2 - VLearn Prototype</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>CP2 — VLearn: Bôi đen + Hỏi (Prototype)</h1>
+
+        <div class="columns three-cols">
+            <div class="panel chat-panel">
+                <h2>Hội thoại (mô phỏng)</h2>
+                <label>Chọn conversation demo:</label>
+                <select id="demoSelect" aria-label="Chọn conversation demo">
+                    <option value="case1">C0025 T0708 — Happy path (có citations)</option>
+                    <option value="case2">C0096 T0558 — Edge case (mơ hồ)</option>
+                </select>
+
+                <div id="chatArea" class="chatArea">
+                    <!-- messages inserted here -->
+                </div>
+
+                <div id="quickCheck" class="quick-check hidden">
+                    <button id="triggerCheck">Kiểm tra nhanh xem bạn hiểu đúng chưa?</button>
+                    <div class="small-note">Tuỳ chọn — có thể bỏ qua.</div>
+                </div>
+            </div>
+
+            <div class="panel student-panel">
+                <h2>Trả lời của học viên</h2>
+                <label>Đoạn tài liệu tham chiếu (tự động):</label>
+                <textarea id="refText" readonly placeholder="Đoạn gốc dùng để sinh câu hỏi / chấm"></textarea>
+
+                <label>Câu hỏi kiểm tra (AI sinh):</label>
+                <textarea id="aiQuestion" readonly placeholder="Nhấn 'Kiểm tra nhanh' để sinh câu hỏi"></textarea>
+
+                <label>Trả lời của học viên (1-2 câu):</label>
+                <textarea id="studentAnswer" placeholder="Viết câu trả lời bằng lời của bạn..."></textarea>
+
+                <div class="buttons">
+                    <button id="submitAnswer">Nộp trả lời</button>
+                    <button id="resetCheck">Bỏ qua / Đặt lại</button>
+                </div>
+
+                <div class="settings">
+                    <label>API key (tùy chọn, dán nếu muốn dùng OpenAI thực):</label>
+                    <input id="apiKey" placeholder="sk-... (optional)" />
+                    <label><input type="checkbox" id="enableLogs" /> Lưu log lần chạy (local)</label>
+                </div>
+            </div>
+
+            <div class="panel result-panel">
+                <h2>Kết quả chấm AI</h2>
+                <div id="gradingResult" class="result">Chưa có kết quả chấm.</div>
+                <div id="explainArea" class="explain"></div>
+                <div class="buttons">
+                    <button id="downloadLogs" class="hidden">Tải logs (JSON)</button>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+        <p class="note">Ghi chú: Đây là prototype CP2 — kết quả có thể là dữ liệu giả để minh họa flow (không cần AI cho
+            CP2).</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

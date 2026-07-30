@@ -1,0 +1,40 @@
+*{box-sizing:border-box;font-family:Segoe UI, Roboto, Arial, sans-serif}
+body{background:#0f1720;color:#e6eef8;margin:0;padding:20px}
+.container{max-width:1100px;margin:0 auto}
+h1{color:#ffd86b}
+.columns{display:flex;gap:16px}
+.panel{flex:1;background:#0e1a24;padding:14px;border-radius:8px;border:1px solid #17303a}
+.doc{min-height:220px;background:#071016;padding:10px;border-radius:6px;outline:2px dashed rgba(255,255,255,0.03);overflow:auto}
+textarea, input{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #25353f;background:#071216;color:#eaf6ff}
+.buttons{display:flex;gap:8px;margin-top:8px}
+button{background:#2da3ff;color:#012;padding:8px 12px;border-radius:6px;border:none;cursor:pointer}
+button#clearBtn{background:#ff6b6b;color:#fff}
+.result{min-height:160px;background:#071018;padding:12px;border-radius:6px;border:1px solid #18303a}
+.hint{font-size:13px;color:#9fb2bb;margin-top:6px}
+.note{color:#b6d0d9}
+.flow-controls{display:flex;gap:8px;margin-top:10px}
+.selected{background:linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));}
+
+/* New layout for quick-check prototype */
+.three-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.chatArea{min-height:260px;background:#061219;padding:10px;border-radius:6px;overflow:auto;border:1px solid #15303a;margin-top:8px}
+.chatMsg{padding:10px;border-radius:8px;margin-bottom:8px;background:linear-gradient(180deg,#07202a,#04151a);border:1px solid #12303a}
+.chatMsg .meta{font-size:12px;color:#9fb2bb;margin-bottom:6px}
+.chatMsg .text{white-space:pre-wrap;color:#e6eef8}
+.quick-check{margin-top:10px}
+.hidden{display:none}
+.student-panel textarea{min-height:80px}
+.result-panel .result{min-height:120px}
+.explain{margin-top:10px;color:#cde8ff;background:#041726;padding:10px;border-radius:6px;border:1px solid #12303a}
+.settings{margin-top:10px;font-size:13px;color:#9fb2bb}
+.small-note{font-size:12px;color:#9fb2bb;margin-top:6px}
+.badge{display:inline-block;padding:8px 12px;border-radius:8px;color:#05151a;font-weight:600}
+.badge.good{background:linear-gradient(90deg,#c6f6d5,#8ef0a3)}
+.badge.warn{background:linear-gradient(90deg,#fff3bf,#ffd86b)}
+.badge.bad{background:linear-gradient(90deg,#ffd6d6,#ff8b8b)}
+.badge.processing{background:linear-gradient(90deg,#cfe9ff,#8fd4ff);color:#002433}
+.chat-panel .chatMsg{position:relative;padding-bottom:28px}
+.chat-panel .chatMsg .meta{position:absolute;right:10px;top:8px;font-size:12px}
+.quick-check{margin-top:8px}
+.quick-check button{background:#ffd86b;color:#062;padding:10px 12px;border-radius:8px}
+.quick-check .small-note{margin-top:6px}
