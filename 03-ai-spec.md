@@ -2,15 +2,13 @@
 Hướng: [x] A — VLearn  [ ] B — Trợ lý Học viên  [ ] C — Làn mở
 Loại: [ ] Tối ưu tính năng có sẵn  [x] Tính năng mới
 
-> Bản nháp — soạn từ mining chatlog thật (`data/vlearn-pack/chatlog/`). Các mục đánh `[TODO — nhóm điền]` cần làm tay (khảo sát 20 người, tên thành viên, phân công, chạy prototype thật) — không thể tự suy ra hoặc bịa.
-
 ## §1. User & Job
 - **Job executor**: Học viên đang trong một buổi học VLearn (`conversation_mode = in_class`), vừa hỏi tutor ít nhất 1 câu về nội dung tài liệu buổi học.
 - **Core JTBD** *(không tên sản phẩm/AI)*: Xác nhận mình đã thực sự hiểu đúng phần vừa học, trước khi rời buổi hoặc chuyển sang phần khác.
 - **Job story**:
-  - When em vừa được tutor giải thích một khái niệm mới xong, em muốn biết mình đã hiểu đúng hay chưa, để em có thể yên tâm chuyển sang phần tiếp theo mà không mang theo hiểu sai.
-  - When em đọc xong một đoạn trả lời dài của tutor, em muốn được hỏi lại bằng một câu ngắn dễ trả lời, để em tự kiểm tra thay vì tự nhận là "đã hiểu" một cách chủ quan.
-  - When buổi học sắp kết thúc, em muốn có một bước chốt lại xem mình còn hổng chỗ nào, để em biết cần ôn lại phần nào trước khi qua bài mới.
+  - Khi em vừa được tutor giải thích một khái niệm mới xong, em muốn biết mình đã hiểu đúng hay chưa, để em có thể yên tâm chuyển sang phần tiếp theo mà không mang theo hiểu sai.
+  - Khi em đọc xong một đoạn trả lời dài của tutor, em muốn được hỏi lại bằng một câu ngắn dễ trả lời, để em tự kiểm tra thay vì tự nhận là "đã hiểu" một cách chủ quan.
+  - Khi buổi học sắp kết thúc, em muốn có một bước chốt lại xem mình còn hổng chỗ nào, để em biết cần ôn lại phần nào trước khi qua bài mới.
 - **Problem statement** *(KHÔNG chữ AI)*: Học viên hỏi xong một câu trong buổi học là rời đi luôn, không có bước nào xác nhận lại họ hiểu đúng — trả lời đúng của tutor không đồng nghĩa với việc học viên tiếp thu đúng, và không ai phát hiện ra chỗ hiểu sai cho tới khi làm quiz/bài thi.
 - **Evidence** (đường B — mining, log tại `data/vlearn-pack/chatlog/`):
   - Số liệu mining (n = 1.261 turn tutor, 585 hội thoại, 22/07–29/07/2026):
@@ -72,7 +70,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [x] Tính năng mới
   1. Không chấm điểm chính thức / không tính vào điểm số khoá học.
   2. Không tự tổng hợp báo cáo hiểu-lệch gửi giảng viên (đó là hướng "bản đồ lỗ hổng lớp" đã bị loại).
   3. Không kiểm tra toàn bộ buổi học — chỉ kiểm tra dựa trên đoạn tài liệu vừa trao đổi trong turn gần nhất.
-- **Mức prototype nhắm tới**: [ ] Sketch [ ] Mock [ ] Working — [TODO — nhóm chọn theo sức]. Phần nào mock/phần nào thật: [TODO — gợi ý: UI có thể Mock (data hội thoại giả lập từ chatlog thật), lõi sinh câu hỏi + chấm phải là AI call thật].
+- **Mức prototype nhắm tới**: [ ] Sketch [X] Mock [ ] Working — [TODO — nhóm chọn theo sức]. Phần nào mock/phần nào thật: [TODO — gợi ý: UI có thể Mock (data hội thoại giả lập từ chatlog thật), lõi sinh câu hỏi + chấm phải là AI call thật].
 - **Automation**: [ ] augment [x] conditional [ ] automate.
   - Lý do (cost-of-error): AI tự sinh câu hỏi kiểm tra + tự chấm sơ bộ khi câu trả lời của học viên rõ ràng đối chiếu được với đoạn tài liệu gốc. Nhưng khi câu trả lời mơ hồ, AI **không tự kết luận "hiểu đúng"** — vì báo sai theo hướng này (nói hiểu đúng trong khi hiểu sai) khiến học viên mang kiến thức sai đi thi mà không tự phát hiện được, sửa đắt. Ngược lại báo "chưa chắc, đọc lại đoạn X" khi học viên thực ra đã hiểu đúng chỉ tốn thêm ít giây đọc lại — sai theo hướng này rẻ hơn nhiều, nên thiên về thận trọng khi không chắc.
 - **§4b. Nguyên tắc đã áp dụng** *(≥4)*:
