@@ -1,59 +1,128 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+/* Bauhaus theme — CSS thuần cho các phần tử do app.js tự sinh (innerHTML),
+   phối hợp với Tailwind utility classes viết tay trong index.html. */
 
-* { box-sizing: border-box; font-family: 'Inter', sans-serif; }
-body { background: #0f1720; color: #e6eef8; margin: 0; padding: 20px; }
-.container { max-width: 1200px; margin: 0 auto; }
-h1 { color: #ffd86b; font-weight: 600; }
-.columns { display: flex; gap: 16px; }
-.panel { flex: 1; background: #0e1a24; padding: 16px; border-radius: 12px; border: 1px solid #17303a; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-textarea, input, select { width: 100%; padding: 10px; margin-top: 6px; border-radius: 8px; border: 1px solid #25353f; background: #071216; color: #eaf6ff; font-size: 14px; transition: border-color 0.2s; }
-textarea:focus, input:focus, select:focus { outline: none; border-color: #2da3ff; }
-.buttons { display: flex; gap: 8px; margin-top: 12px; }
-button { background: #2da3ff; color: #012; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; transition: background 0.2s, transform 0.1s; }
-button:hover { background: #5bb3ff; transform: translateY(-1px); }
-button:active { transform: translateY(0); }
-button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.hint { font-size: 13px; color: #9fb2bb; margin-top: 6px; }
-.note { color: #b6d0d9; font-size: 13px; margin-top: 20px; }
+* { box-sizing: border-box; }
+body { font-family: 'Be Vietnam Pro', sans-serif; }
 
-/* Login / session */
-.login-bar { background: #0e1a24; border: 1px solid #17303a; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-.login-bar label { font-size: 13px; color: #cde8ff; }
-.login-row { display: flex; gap: 8px; margin-top: 8px; }
-.login-row input { flex: 1; margin-top: 0; }
-.login-row button { flex-shrink: 0; }
-.session-bar { display: flex; align-items: center; justify-content: space-between; background: #0e1a24; border: 1px solid #17303a; border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; font-size: 14px; }
-.session-bar button { padding: 6px 12px; font-size: 13px; background: #ff9800; color: #fff; }
-.session-bar button:hover { background: #ffb74d; }
-
-/* Layout */
-.top-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; margin-bottom: 16px; }
-.single-col { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
-.demo-panel { opacity: 0.85; }
-.chatArea { min-height: 200px; background: #061219; padding: 12px; border-radius: 8px; overflow: auto; border: 1px solid #15303a; margin-top: 12px; }
-.chatMsg { padding: 12px; border-radius: 10px; margin-bottom: 10px; background: linear-gradient(180deg, #07202a, #04151a); border: 1px solid #12303a; position: relative; padding-bottom: 32px; }
-.chatMsg .meta { position: absolute; right: 12px; top: 10px; font-size: 12px; color: #9fb2bb; }
-.chatMsg .text { white-space: pre-wrap; color: #e6eef8; line-height: 1.5; font-size: 14px; margin-top: 8px;}
 .hidden { display: none !important; }
-.settings { margin-top: 16px; font-size: 13px; color: #9fb2bb; padding-top: 12px; border-top: 1px solid #17303a; }
-.small-note { font-size: 12px; color: #9fb2bb; margin-top: 6px; text-align: center;}
 
-/* Badges */
-.badge { display: inline-block; padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-.badge.good { background: linear-gradient(90deg, #c6f6d5, #8ef0a3); color: #052c15; }
-.badge.warn { background: linear-gradient(90deg, #fff3bf, #ffd86b); color: #332600; }
-.badge.bad { background: linear-gradient(90deg, #ffd6d6, #ff8b8b); color: #330000; }
-.badge.outofscope { background: linear-gradient(90deg, #e9d5ff, #c084fc); color: #2e1065; }
+/* ---- Chat bubble (assistant + demo library) ---- */
+.chatMsg {
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    background: #ffffff;
+    border: 2px solid #121212;
+    position: relative;
+    font-weight: 500;
+}
+.chatMsg .meta {
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #1040C0;
+    margin-bottom: 6px;
+}
+.chatMsg .text {
+    white-space: pre-wrap;
+    color: #121212;
+    line-height: 1.5;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+.chatMsg .text.pending { font-style: italic; opacity: 0.6; animation: bauhausPulse 1.2s ease-in-out infinite; }
 
-.badge-difficulty { display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #25353f; color: #ffd86b; border: 1px solid #4a5c68; }
+.chatMsg.role-user {
+    background: #F0C020;
+    border: 2px solid #121212;
+    margin-left: 15%;
+}
+.chatMsg.role-user .meta { color: #121212; }
+.chatMsg.role-ai {
+    background: #ffffff;
+    border: 2px solid #121212;
+    margin-right: 10%;
+}
+.chatMsg.role-sys {
+    background: transparent;
+    border: 2px dashed #121212;
+    font-style: italic;
+    font-size: 12px;
+    text-align: center;
+    opacity: 0.75;
+}
 
-/* PDF panel */
-.pdf-panel input[type="file"] { padding: 8px; font-size: 13px; }
-.pdf-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; }
-.pdf-toolbar button { padding: 6px 10px; font-size: 13px; }
-.pdf-page-info { font-size: 13px; color: #9fb2bb; }
-.pdf-viewer { position: relative; margin-top: 10px; max-height: 480px; overflow: auto; background: #061219; border: 1px solid #15303a; border-radius: 8px; }
-.pdf-viewer canvas { display: block; }
+@keyframes bauhausPulse {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.85; }
+}
+
+/* ---- Badge (kết quả chấm) ---- */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 900;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 2px solid #121212;
+    margin-bottom: 6px;
+}
+.badge.good { background: #1040C0; color: #ffffff; }
+.badge.warn { background: #F0C020; color: #121212; }
+.badge.bad { background: #D02020; color: #ffffff; }
+.badge.outofscope { background: #121212; color: #F0C020; }
+
+/* ---- Flashcard (active recall) ---- */
+.flashcard-answer {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #F0F0F0;
+    border: 2px solid #121212;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+.flashcard-actions { display: flex; gap: 8px; margin-top: 10px; }
+.flashcard-actions button {
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: 2px solid #121212;
+    border-radius: 0;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px 0px #121212;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+.flashcard-actions button:active { transform: translate(2px, 2px); box-shadow: none; }
+.flashcard-actions .flashcard-reveal { background: #1040C0; color: #ffffff; }
+.flashcard-actions .flashcard-remember { background: #1040C0; color: #ffffff; }
+.flashcard-actions .flashcard-forget { background: #D02020; color: #ffffff; }
+.recall-result { font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
+.recall-result.good { color: #1040C0; }
+.recall-result.bad { color: #D02020; }
+
+/* ---- Mock test report ---- */
+.mocktest-results { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+.mocktest-row { font-size: 13px; font-weight: 500; color: #121212; }
+
+/* ---- Hồ sơ hiểu lầm ---- */
+.misconception-item {
+    padding: 10px 12px;
+    background: #F0C020;
+    border: 2px solid #121212;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+.misconception-item .mc-meta { font-weight: 900; font-size: 11px; text-transform: uppercase; margin-bottom: 4px; }
+.misconception-item .mc-q { color: #121212; margin-bottom: 2px; }
+.misconception-item .mc-a { color: #121212; margin-bottom: 2px; }
+.misconception-item .mc-detail { color: #121212; font-style: italic; }
+
+/* ---- PDF text layer (chức năng bôi đen — không đổi vị trí/hành vi) ---- */
+.pdf-viewer canvas, #pdfViewerWrap canvas { display: block; }
 .textLayer {
     position: absolute;
     top: 0; left: 0;
@@ -68,71 +137,14 @@ button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     cursor: text;
     transform-origin: 0% 0%;
 }
-.textLayer ::selection { background: rgba(45, 163, 255, 0.4); }
-#pdfAskAI { background: #8ef0a3; color: #052c15; width: 100%; margin-top: 10px; }
-#pdfAskAI:hover { background: #b4f5c4; }
+.textLayer ::selection { background: rgba(16, 64, 192, 0.35); }
+#pdfViewerWrap { position: relative; }
 
-/* Assistant panel (chatbox thống nhất) */
-.ref-context { min-height: 70px; }
-.assistant-messages {
-    min-height: 260px;
-    max-height: 440px;
-    overflow-y: auto;
-    background: #061219;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #15303a;
-    margin-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.chatMsg.role-user { align-self: flex-end; background: linear-gradient(180deg, #123244, #0a2230); max-width: 82%; }
-.chatMsg.role-ai { align-self: flex-start; background: linear-gradient(180deg, #07202a, #04151a); max-width: 88%; }
-.chatMsg.role-sys { align-self: center; background: transparent; border: 1px dashed #25353f; color: #9fb2bb; font-size: 12px; font-style: italic; max-width: 95%; text-align: center; padding-bottom: 12px; }
-.chatMsg .text.pending { color: #9fb2bb; font-style: italic; }
-.chatMsg .badge { margin-top: 8px; }
+.chatArea { min-height: 160px; max-height: 300px; overflow: auto; padding: 12px; }
 
-.pending-check-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; padding: 8px 12px; background: #2b2308; border: 1px solid #4a3c0e; border-radius: 8px; font-size: 13px; color: #ffd86b; }
-.pending-check-bar button { padding: 6px 10px; font-size: 12px; background: #ff9800; color: #fff; }
-.pending-check-bar button:hover { background: #ffb74d; }
-
-.quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-.quick-actions button { flex: 1 1 45%; background: #ffd86b; color: #062; font-weight: 600; font-size: 13px; }
-.quick-actions button:hover { background: #ffe391; }
-
-/* Flashcard (active recall) */
-.flashcard-answer { margin-top: 8px; padding: 8px 10px; background: #041726; border: 1px solid #12303a; border-radius: 6px; color: #cde8ff; font-size: 14px; }
-.flashcard-actions { display: flex; gap: 8px; margin-top: 8px; }
-.flashcard-actions button { padding: 6px 10px; font-size: 12px; }
-.flashcard-actions .flashcard-reveal { background: #2da3ff; color: #012; }
-.flashcard-actions .flashcard-remember { background: #8ef0a3; color: #052c15; }
-.flashcard-actions .flashcard-forget { background: #ff8b8b; color: #330000; }
-.recall-result { font-weight: 600; font-size: 13px; }
-.recall-result.good { color: #8ef0a3; }
-.recall-result.bad { color: #ff8b8b; }
-
-/* Mock test */
-.mocktest-results { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }
-.mocktest-row { font-size: 13px; color: #cde8ff; }
-
-.chat-input-row { display: flex; gap: 8px; margin-top: 10px; }
-.chat-input-row input { flex: 1; margin-top: 0; }
-.chat-input-row button { flex-shrink: 0; }
-
-/* Hồ sơ hiểu lầm */
-.misconceptions-panel { margin-top: 16px; padding-top: 12px; border-top: 1px solid #17303a; }
-.misconceptions-panel h3 { margin: 0 0 8px 0; font-size: 14px; color: #ffd86b; display: flex; align-items: center; gap: 8px; }
-.mc-count { background: #25353f; color: #ffd86b; border: 1px solid #4a5c68; border-radius: 999px; padding: 2px 9px; font-size: 12px; }
-.misconception-list { max-height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-.misconception-item { padding: 10px; border-radius: 8px; background: #2b2308; border: 1px solid #4a3c0e; font-size: 13px; }
-.misconception-item .mc-meta { color: #ffd86b; font-weight: 600; font-size: 12px; margin-bottom: 4px; }
-.misconception-item .mc-q { color: #e6eef8; margin-bottom: 2px; }
-.misconception-item .mc-a { color: #cde8ff; margin-bottom: 2px; }
-.misconception-item .mc-detail { color: #ffb4b4; }
-
-@keyframes pulse {
-    0% { opacity: 0.8; }
-    50% { opacity: 1; }
-    100% { opacity: 0.8; }
+/* ---- Motion (mechanical, snappy — theo tinh thần Bauhaus, không mềm/organic) ---- */
+.chatMsg { animation: bauhausIn 0.18s ease-out both; }
+@keyframes bauhausIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
 }

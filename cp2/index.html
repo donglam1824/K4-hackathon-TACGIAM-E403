@@ -4,95 +4,184 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>CP2 - VLearn Prototype</title>
+    <title>VLearn — Trợ lý học tập</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#121212',
+                        canvas: '#F0F0F0',
+                        muted: '#E0E0E0',
+                        bred: '#D02020',
+                        bblue: '#1040C0',
+                        byellow: '#F0C020',
+                    },
+                    fontFamily: { sans: ['Be Vietnam Pro', 'sans-serif'] },
+                }
+            }
+        };
+    </script>
+
     <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
-    <div class="container">
-        <h1>CP2 — VLearn: Trợ lý học tập (Prototype)</h1>
+<body class="bg-canvas text-ink font-sans">
+    <div class="max-w-6xl mx-auto px-4 py-8 sm:py-12">
 
-        <div id="loginBar" class="login-bar">
-            <label>Nhập tên/mã học viên để bắt đầu (dùng để lưu và tra cứu lịch sử học tập của riêng bạn):</label>
-            <div class="login-row">
-                <input type="text" id="studentIdInput" placeholder="vd: minhquan01" />
-                <button id="loginBtn">Đăng nhập</button>
+        <!-- Header: geometric logo + title -->
+        <header class="flex items-center justify-between border-b-4 border-ink pb-6 mb-8">
+            <div class="flex items-center gap-3">
+                <span class="relative inline-block h-9 w-9 shrink-0">
+                    <span class="absolute left-0 top-0 h-6 w-6 rounded-full bg-bred border-2 border-ink"></span>
+                    <span class="absolute right-0 top-0 h-6 w-6 bg-byellow border-2 border-ink rotate-12"></span>
+                    <span class="absolute left-1/2 bottom-0 h-6 w-6 -translate-x-1/2 bg-bblue border-2 border-ink" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></span>
+                </span>
+                <div>
+                    <div class="text-xs font-black uppercase tracking-widest text-bblue">VLearn · CP2</div>
+                    <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none">Trợ lý học tập</h1>
+                </div>
+            </div>
+            <p class="hidden md:block max-w-xs text-right text-sm font-medium">Bôi đen slide, hỏi tự do, và tự kiểm tra hiểu bài — có căn cứ, không đoán mò.</p>
+        </header>
+
+        <!-- Login -->
+        <div id="loginBar" class="bg-white border-4 border-ink shadow-[8px_8px_0px_0px_black] p-6 mb-8">
+            <label class="block text-xs font-bold uppercase tracking-widest text-ink mb-2">Nhập tên/mã học viên để bắt đầu</label>
+            <p class="text-sm font-medium mb-3">Dùng để lưu và tra cứu lịch sử học tập của riêng bạn.</p>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="studentIdInput" placeholder="vd: minhquan01"
+                    class="flex-1 border-2 border-ink px-4 py-3 font-medium bg-white focus:outline-none focus:ring-0 rounded-none" />
+                <button id="loginBtn"
+                    class="shrink-0 bg-bred text-white border-2 border-ink shadow-[4px_4px_0px_0px_black] px-6 py-3 font-bold uppercase tracking-wider rounded-none transition-transform duration-200 ease-out active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                    Đăng nhập
+                </button>
             </div>
         </div>
 
-        <div id="sessionBar" class="session-bar hidden">
-            <span>👤 Đang học với tư cách: <strong id="sessionStudentName"></strong></span>
-            <button id="logoutBtn">Đăng xuất</button>
+        <!-- Session bar -->
+        <div id="sessionBar" class="hidden bg-bblue text-white border-4 border-ink shadow-[6px_6px_0px_0px_black] px-5 py-3 mb-8 flex items-center justify-between">
+            <span class="font-bold uppercase tracking-wide text-sm flex items-center gap-2">
+                <span class="h-2.5 w-2.5 rounded-full bg-byellow border border-ink"></span>
+                Đang học với tư cách <strong id="sessionStudentName" class="font-black"></strong>
+            </span>
+            <button id="logoutBtn"
+                class="bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                Đăng xuất
+            </button>
         </div>
 
         <div id="appMain" class="hidden">
-        <div class="columns top-row">
-            <div class="panel pdf-panel">
-                <h2>Slide PDF</h2>
-                <input type="file" id="pdfFile" accept="application/pdf" />
-                <div class="pdf-toolbar">
-                    <button id="pdfPrev">&laquo; Trước</button>
-                    <span class="pdf-page-info">Trang <span id="pdfPageNum">-</span>/<span id="pdfPageCount">-</span></span>
-                    <button id="pdfNext">Sau &raquo;</button>
-                </div>
-                <div id="pdfViewerWrap" class="pdf-viewer">
-                    <canvas id="pdfCanvas"></canvas>
-                    <div id="pdfTextLayer" class="textLayer"></div>
-                </div>
-                <div class="small-note">Bôi đen đoạn văn trên slide rồi bấm nút bên dưới để dùng làm ngữ cảnh.</div>
-                <button id="pdfAskAI" class="hidden">Dùng đoạn đã bôi đen làm ngữ cảnh</button>
-            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-6 mb-6 items-start">
 
-            <div class="panel assistant-panel">
-                <h2>Trợ lý học tập</h2>
-
-                <label>Ngữ cảnh đang dùng (tự động từ PDF/demo, hoặc gõ tay):</label>
-                <textarea id="refText" class="ref-context" placeholder="Dán/gõ đoạn tài liệu tham chiếu vào đây, hoặc bôi đen một đoạn trên PDF bên trái..."></textarea>
-
-                <div id="assistantMessages" class="assistant-messages">
-                    <div class="chatMsg role-sys"><div class="text">Chọn ngữ cảnh (PDF, demo, hoặc gõ tay) rồi hỏi tự do, tóm tắt, hoặc kiểm tra hiểu bài bên dưới.</div></div>
-                </div>
-
-                <div id="pendingCheckBar" class="pending-check-bar hidden">
-                    <span id="pendingCheckText">🧪 Đang chờ bạn trả lời câu hỏi kiểm tra ở trên...</span>
-                    <button id="cancelCheck">Hủy</button>
-                </div>
-
-                <div class="quick-actions">
-                    <button id="actSummarize">Tóm tắt / giải thích</button>
-                    <button id="actCheck">Kiểm tra hiểu bài</button>
-                    <button id="actQuiz">Tạo quiz (5 câu)</button>
-                    <button id="actRecall">Active recall (flashcard)</button>
-                    <button id="actMockTest">Ôn thi mock test (8 câu, 5 phút)</button>
-                    <button id="actDailyReport">Báo cáo hôm nay</button>
-                    <button id="actAssessProgress">Đánh giá trải nghiệm học tập</button>
+                <!-- PDF panel -->
+                <div class="relative bg-white border-4 border-ink shadow-[8px_8px_0px_0px_black] p-6">
+                    <span class="absolute -top-3 -right-3 h-5 w-5 bg-byellow border-2 border-ink"></span>
+                    <h2 class="text-lg font-black uppercase tracking-tight border-b-4 border-ink pb-2 mb-4">Slide PDF</h2>
+                    <input type="file" id="pdfFile" accept="application/pdf"
+                        class="w-full border-2 border-ink px-3 py-2 text-sm font-medium bg-white rounded-none" />
+                    <div class="flex items-center justify-between gap-2 mt-3">
+                        <button id="pdfPrev"
+                            class="bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-3 py-1.5 text-xs font-bold uppercase rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">&laquo; Trước</button>
+                        <span class="text-xs font-bold uppercase tracking-wide">Trang <span id="pdfPageNum">-</span>/<span id="pdfPageCount">-</span></span>
+                        <button id="pdfNext"
+                            class="bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-3 py-1.5 text-xs font-bold uppercase rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Sau &raquo;</button>
+                    </div>
+                    <div class="flex items-center justify-center gap-2 mt-2">
+                        <button id="pdfZoomOut"
+                            class="bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] w-8 h-8 flex items-center justify-center text-sm font-black rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">−</button>
+                        <span id="pdfZoomLevel" class="text-xs font-bold uppercase tracking-wide w-12 text-center">100%</span>
+                        <button id="pdfZoomIn"
+                            class="bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] w-8 h-8 flex items-center justify-center text-sm font-black rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">+</button>
+                        <button id="pdfZoomReset"
+                            class="bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-3 h-8 text-xs font-bold uppercase rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Vừa khung</button>
+                    </div>
+                    <div id="pdfViewerWrap" class="relative mt-3 max-h-[560px] overflow-auto bg-canvas border-2 border-ink">
+                        <canvas id="pdfCanvas"></canvas>
+                        <div id="pdfTextLayer" class="textLayer"></div>
+                    </div>
+                    <p class="text-xs font-medium mt-3">Bôi đen đoạn văn trên slide rồi bấm nút bên dưới để dùng làm ngữ cảnh.</p>
+                    <button id="pdfAskAI"
+                        class="hidden w-full mt-3 bg-bblue text-white border-2 border-ink shadow-[4px_4px_0px_0px_black] px-4 py-3 font-bold uppercase tracking-wider rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                        Dùng đoạn đã bôi đen làm ngữ cảnh
+                    </button>
                 </div>
 
-                <div class="chat-input-row">
-                    <input type="text" id="chatInput" placeholder="Nhập câu hỏi hoặc câu trả lời..." />
-                    <button id="chatSend">Gửi</button>
-                </div>
+                <!-- Assistant panel -->
+                <div class="relative bg-white border-4 border-ink shadow-[8px_8px_0px_0px_black] p-6">
+                    <span class="absolute -top-3 -right-3 h-5 w-5 rounded-full bg-bred border-2 border-ink"></span>
+                    <h2 class="text-lg font-black uppercase tracking-tight border-b-4 border-ink pb-2 mb-4">Trợ lý học tập</h2>
 
-                <div class="settings">
-                    <div class="small-note" style="text-align:left;">LLM Provider: Google Gemini (gemini-3.1-flash-lite) — via Backend</div>
-                    <div class="small-note" style="text-align:left; margin-top:6px;">Lịch sử học được tự động lưu theo tài khoản đang đăng nhập.</div>
-                    <button id="downloadLogs" class="hidden" style="margin-top:10px;">Tải logs (JSON)</button>
-                </div>
+                    <label class="block text-xs font-bold uppercase tracking-widest mb-1">Ngữ cảnh đang dùng</label>
+                    <textarea id="refText"
+                        placeholder="Dán/gõ đoạn tài liệu tham chiếu vào đây, hoặc bôi đen một đoạn trên PDF bên trái..."
+                        class="w-full min-h-[70px] border-2 border-ink px-3 py-2 text-sm font-medium bg-white rounded-none resize-y"></textarea>
 
-                <div class="misconceptions-panel">
-                    <h3>Hồ sơ hiểu lầm (phiên này) <span id="misconceptionCount" class="mc-count">0</span></h3>
-                    <div id="misconceptionList" class="misconception-list">
-                        <div class="small-note" style="text-align:left;">Chưa phát hiện hiểu lầm nào trong phiên này.</div>
+                    <div id="assistantMessages" class="mt-4 min-h-[220px] max-h-[420px] overflow-y-auto bg-canvas border-2 border-ink p-3 flex flex-col gap-2">
+                        <div class="chatMsg role-sys"><div class="text">Chọn ngữ cảnh (PDF, demo, hoặc gõ tay) rồi hỏi tự do, tóm tắt, hoặc kiểm tra hiểu bài bên dưới.</div></div>
+                    </div>
+
+                    <div id="pendingCheckBar" class="hidden mt-3 bg-byellow border-2 border-ink px-4 py-2 flex items-center justify-between gap-3">
+                        <span id="pendingCheckText" class="text-xs font-bold uppercase tracking-wide"></span>
+                        <button id="cancelCheck"
+                            class="bg-ink text-byellow border-2 border-ink px-3 py-1 text-xs font-bold uppercase rounded-none active:translate-x-[2px] active:translate-y-[2px]">Hủy</button>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        <button id="actCheck"
+                            class="flex-1 min-w-[45%] bg-bred text-white border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Kiểm tra hiểu bài</button>
+                        <button id="actSummarize"
+                            class="flex-1 min-w-[45%] bg-white text-ink border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Tóm tắt / giải thích</button>
+                        <button id="actQuiz"
+                            class="flex-1 min-w-[45%] bg-white text-ink border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Tạo quiz (5 câu)</button>
+                        <button id="actRecall"
+                            class="flex-1 min-w-[45%] bg-white text-ink border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Active recall</button>
+                        <button id="actMockTest"
+                            class="flex-1 min-w-[45%] bg-white text-ink border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Mock test (8 câu)</button>
+                        <button id="actDailyReport"
+                            class="flex-1 min-w-[45%] bg-white text-ink border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Báo cáo hôm nay</button>
+                        <button id="actAssessProgress"
+                            class="flex-1 min-w-[45%] bg-white text-ink border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Đánh giá tiến độ</button>
+                    </div>
+
+                    <div class="flex gap-2 mt-4">
+                        <input type="text" id="chatInput" placeholder="Nhập câu hỏi hoặc câu trả lời..."
+                            class="flex-1 border-2 border-ink px-3 py-2.5 text-sm font-medium bg-white rounded-none" />
+                        <button id="chatSend"
+                            class="shrink-0 bg-bred text-white border-2 border-ink shadow-[4px_4px_0px_0px_black] px-6 py-2.5 font-bold uppercase tracking-wider rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Gửi</button>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t-4 border-ink">
+                        <p class="text-xs font-medium">LLM Provider: Google Gemini (gemini-3.1-flash-lite) — via Backend</p>
+                        <p class="text-xs font-medium mt-1">Lịch sử học được tự động lưu theo tài khoản đang đăng nhập.</p>
+                        <button id="downloadLogs"
+                            class="hidden mt-3 bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-4 py-2 text-xs font-bold uppercase rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Tải logs (JSON)</button>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t-4 border-ink">
+                        <h3 class="text-sm font-black uppercase tracking-wide flex items-center gap-2 mb-3">
+                            Hồ sơ hiểu lầm (phiên này)
+                            <span id="misconceptionCount" class="bg-ink text-byellow border-2 border-ink rounded-full h-6 min-w-[24px] px-1.5 inline-flex items-center justify-center text-xs">0</span>
+                        </h3>
+                        <div id="misconceptionList" class="max-h-[240px] overflow-y-auto flex flex-col gap-2">
+                            <p class="text-xs font-medium">Chưa phát hiện hiểu lầm nào trong phiên này.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="columns single-col">
-            <div class="panel chat-panel demo-panel">
-                <h2>Thư viện hội thoại mẫu (demo, chỉ để nạp ngữ cảnh test nhanh)</h2>
-                <label>Chọn conversation demo:</label>
-                <select id="demoSelect" aria-label="Chọn conversation demo">
+            <!-- Demo library -->
+            <div class="relative bg-bblue text-white border-4 border-ink shadow-[8px_8px_0px_0px_black] p-6 mb-8">
+                <span class="absolute -top-3 -right-3 h-5 w-5 bg-byellow border-2 border-ink rotate-45"></span>
+                <h2 class="text-lg font-black uppercase tracking-tight border-b-4 border-white/60 pb-2 mb-4">Thư viện hội thoại mẫu (demo)</h2>
+                <label class="block text-xs font-bold uppercase tracking-widest mb-1">Chọn conversation demo</label>
+                <select id="demoSelect" aria-label="Chọn conversation demo"
+                    class="w-full border-2 border-ink px-3 py-2 text-sm font-bold bg-white text-ink rounded-none">
                     <option value="case1">C0025 T0708 — Happy path (có citations)</option>
                     <option value="case2">C0096 T0558 — Edge case (mơ hồ)</option>
                     <option value="case3">C0063 T0849 — Tutor kiểm tra (lớp 4)</option>
@@ -102,19 +191,16 @@
                     <option value="case7">C0063 T0849 — Hallucination (ngoài tài liệu)</option>
                     <option value="case8">C0220 T0939 — Hậu quả thật (sai kiến thức)</option>
                 </select>
-                <div id="difficultyBadge" class="badge-difficulty hidden">Lớp: <span id="layerNum"></span></div>
+                <div id="difficultyBadge" class="hidden inline-block mt-3 bg-byellow text-ink border-2 border-ink rounded-full px-3 py-1 text-xs font-black uppercase">Lớp: <span id="layerNum"></span></div>
 
-                <div id="demoChatArea" class="chatArea">
+                <div id="demoChatArea" class="chatArea mt-3 bg-white text-ink border-2 border-ink">
                     <!-- messages inserted here -->
                 </div>
             </div>
         </div>
 
-        </div>
-
-        <hr />
-        <p class="note">Ghi chú: Đây là prototype CP2 — kết quả có thể là dữ liệu giả để minh họa flow (không cần AI cho
-            CP2).</p>
+        <hr class="border-t-4 border-ink my-8" />
+        <p class="text-xs font-medium text-center">Ghi chú: Đây là prototype CP2 — kết quả có thể là dữ liệu giả để minh họa flow (không cần AI cho CP2).</p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>

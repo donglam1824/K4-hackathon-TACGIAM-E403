@@ -836,6 +836,11 @@ const pdfPageCountEl = document.getElementById('pdfPageCount');
 const pdfPrevBtn = document.getElementById('pdfPrev');
 const pdfNextBtn = document.getElementById('pdfNext');
 const pdfAskAI = document.getElementById('pdfAskAI');
+const pdfViewerWrap = document.getElementById('pdfViewerWrap');
+const pdfZoomInBtn = document.getElementById('pdfZoomIn');
+const pdfZoomOutBtn = document.getElementById('pdfZoomOut');
+const pdfZoomResetBtn = document.getElementById('pdfZoomReset');
+const pdfZoomLevelEl = document.getElementById('pdfZoomLevel');
 
 if (typeof pdfjsLib !== 'undefined') {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -844,6 +849,16 @@ if (typeof pdfjsLib !== 'undefined') {
 let pdfDoc = null;
 let pdfPageNum = 1;
 let pdfRenderTask = null;
+let pdfScale = null; // null = chưa tính, sẽ auto-fit theo chiều rộng khung khi mở file/lật trang mới
+let pdfFitScale = 1; // scale tương ứng "vừa khung" (100%), dùng làm mốc hiển thị % zoom
+const PDF_MIN_ZOOM_RATIO = 0.4;
+const PDF_MAX_ZOOM_RATIO = 3;
+
+function updatePdfZoomLabel() {
+    if (pdfZoomLevelEl && pdfFitScale) {
+        pdfZoomLevelEl.innerText = `${Math.round((pdfScale / pdfFitScale) * 100)}%`;
+    }
+}
 
 // Xây text-layer thủ công (không phụ thuộc API renderTextLayer nội bộ của pdf.js,
 // vốn thay đổi chữ ký giữa các bản, để đảm bảo luôn bôi đen được).
@@ -872,7 +887,15 @@ function buildTextLayer(textContent, viewport, container) {
 async function renderPdfPage(num) {
     try {
         const page = await pdfDoc.getPage(num);
-        const viewport = page.getViewport({ scale: 1.3 });
+
+        if (pdfScale === null) {
+            const unscaledViewport = page.getViewport({ scale: 1 });
+            const containerWidth = (pdfViewerWrap && pdfViewerWrap.clientWidth) || 700;
+            pdfFitScale = Math.max(0.3, (containerWidth - 4) / unscaledViewport.width);
+            pdfScale = pdfFitScale;
+        }
+
+        const viewport = page.getViewport({ scale: pdfScale });
 
         pdfCanvas.width = viewport.width;
         pdfCanvas.height = viewport.height;
@@ -894,6 +917,7 @@ async function renderPdfPage(num) {
         pdfPageNum = num;
         pdfPageNumEl.innerText = num;
         pdfAskAI.classList.add('hidden');
+        updatePdfZoomLabel();
     } catch (err) {
         if (err?.name !== 'RenderingCancelledException') {
             console.error('PDF render error:', err);
@@ -908,11 +932,30 @@ pdfFileInput?.addEventListener('change', async (e) => {
         const buf = await file.arrayBuffer();
         pdfDoc = await pdfjsLib.getDocument({ data: buf }).promise;
         pdfPageCountEl.innerText = pdfDoc.numPages;
+        pdfScale = null; // file mới -> tính lại "vừa khung" theo kích thước trang đầu
         renderPdfPage(1);
     } catch (err) {
         console.error('PDF load error:', err);
         alert('Không thể mở file PDF này: ' + err.message);
     }
+});
+
+pdfZoomInBtn?.addEventListener('click', () => {
+    if (!pdfDoc || pdfScale === null) return;
+    pdfScale = Math.min(pdfFitScale * PDF_MAX_ZOOM_RATIO, pdfScale * 1.2);
+    renderPdfPage(pdfPageNum);
+});
+
+pdfZoomOutBtn?.addEventListener('click', () => {
+    if (!pdfDoc || pdfScale === null) return;
+    pdfScale = Math.max(pdfFitScale * PDF_MIN_ZOOM_RATIO, pdfScale / 1.2);
+    renderPdfPage(pdfPageNum);
+});
+
+pdfZoomResetBtn?.addEventListener('click', () => {
+    if (!pdfDoc) return;
+    pdfScale = null; // buộc tính lại đúng "vừa khung"
+    renderPdfPage(pdfPageNum);
 });
 
 pdfPrevBtn?.addEventListener('click', () => {
