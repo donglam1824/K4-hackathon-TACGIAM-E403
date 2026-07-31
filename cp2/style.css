@@ -6,6 +6,48 @@ body { font-family: 'Be Vietnam Pro', sans-serif; }
 
 .hidden { display: none !important; }
 
+/* ---- Trang ôn flashcard ---- */
+.filter-btn {
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: 2px solid #121212;
+    background: #ffffff;
+    color: #121212;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px 0px #121212;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+.filter-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+.filter-btn.filter-btn-active { background: #1040C0; color: #ffffff; }
+
+.review-card {
+    position: relative;
+    background: #ffffff;
+    border: 4px solid #121212;
+    box-shadow: 8px 8px 0px 0px #121212;
+    padding: 20px;
+}
+.review-card .review-meta { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; color: #1040C0; margin-bottom: 8px; }
+.review-card .review-question { font-size: 15px; font-weight: 700; color: #121212; margin-bottom: 4px; }
+.review-card .review-answer { margin-top: 10px; padding: 12px; background: #F0F0F0; border: 2px solid #121212; font-size: 13.5px; font-weight: 500; }
+.review-card .review-actions { display: flex; gap: 8px; margin-top: 12px; }
+.review-card .review-actions button {
+    padding: 6px 14px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.03em;
+    border: 2px solid #121212; cursor: pointer; box-shadow: 3px 3px 0px 0px #121212;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+.review-card .review-actions button:active { transform: translate(2px, 2px); box-shadow: none; }
+.review-card .btn-reveal { background: #1040C0; color: #ffffff; }
+.review-card .btn-good { background: #1040C0; color: #ffffff; }
+.review-card .btn-bad { background: #D02020; color: #ffffff; }
+.review-card .review-status { position: absolute; top: -12px; right: -12px; border: 2px solid #121212; border-radius: 999px; padding: 3px 12px; font-size: 10px; font-weight: 900; text-transform: uppercase; }
+.review-status.good { background: #1040C0; color: #ffffff; }
+.review-status.bad { background: #D02020; color: #ffffff; }
+.review-status.untested { background: #F0C020; color: #121212; }
+
 /* ---- Chat bubble (assistant + demo library) ---- */
 .chatMsg {
     padding: 12px 14px;
@@ -103,6 +145,24 @@ body { font-family: 'Be Vietnam Pro', sans-serif; }
 .recall-result { font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
 .recall-result.good { color: #1040C0; }
 .recall-result.bad { color: #D02020; }
+
+/* ---- Gợi ý "Kiểm tra hiểu bài" sau khi AI trả lời ---- */
+.suggestion-actions { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+.suggestion-actions button {
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: 2px solid #121212;
+    border-radius: 0;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px 0px #121212;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+.suggestion-actions button:active { transform: translate(2px, 2px); box-shadow: none; }
+.suggestion-check-btn { background: #1040C0; color: #ffffff; }
+.suggestion-dismiss-btn { background: #ffffff; color: #121212; }
 
 /* ---- Mock test report ---- */
 .mocktest-results { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; }

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>VLearn — Ôn lại Flashcard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap" rel="stylesheet" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: '#121212',
+                        canvas: '#F0F0F0',
+                        muted: '#E0E0E0',
+                        bred: '#D02020',
+                        bblue: '#1040C0',
+                        byellow: '#F0C020',
+                    },
+                    fontFamily: { sans: ['Be Vietnam Pro', 'sans-serif'] },
+                }
+            }
+        };
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-canvas text-ink font-sans">
+    <div class="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+
+        <header class="flex items-center justify-between border-b-4 border-ink pb-6 mb-8">
+            <div class="flex items-center gap-3">
+                <span class="relative inline-block h-9 w-9 shrink-0">
+                    <span class="absolute left-0 top-0 h-6 w-6 rounded-full bg-bred border-2 border-ink"></span>
+                    <span class="absolute right-0 top-0 h-6 w-6 bg-byellow border-2 border-ink rotate-12"></span>
+                    <span class="absolute left-1/2 bottom-0 h-6 w-6 -translate-x-1/2 bg-bblue border-2 border-ink" style="clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></span>
+                </span>
+                <div>
+                    <div class="text-xs font-black uppercase tracking-widest text-bblue">VLearn · CP2</div>
+                    <h1 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter leading-none">Ôn lại Flashcard</h1>
+                </div>
+            </div>
+            <a href="index.html"
+                class="bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-4 py-1.5 text-xs font-bold uppercase tracking-wider active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                &laquo; Về trang chính
+            </a>
+        </header>
+
+        <div id="loginBar" class="bg-white border-4 border-ink shadow-[8px_8px_0px_0px_black] p-6 mb-8">
+            <label class="block text-xs font-bold uppercase tracking-widest text-ink mb-2">Nhập tên/mã học viên</label>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="studentIdInput" placeholder="vd: minhquan01"
+                    class="flex-1 border-2 border-ink px-4 py-3 font-medium bg-white focus:outline-none focus:ring-0 rounded-none" />
+                <button id="loginBtn"
+                    class="shrink-0 bg-bred text-white border-2 border-ink shadow-[4px_4px_0px_0px_black] px-6 py-3 font-bold uppercase tracking-wider rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                    Xem flashcard
+                </button>
+            </div>
+        </div>
+
+        <div id="reviewMain" class="hidden">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <div class="flex gap-2">
+                    <button id="filterAll" class="filter-btn filter-btn-active">Tất cả (<span id="countAll">0</span>)</button>
+                    <button id="filterBad" class="filter-btn">Chưa nhớ (<span id="countBad">0</span>)</button>
+                    <button id="filterGood" class="filter-btn">Đã nhớ (<span id="countGood">0</span>)</button>
+                    <button id="filterUntested" class="filter-btn">Chưa test (<span id="countUntested">0</span>)</button>
+                </div>
+            </div>
+
+            <div id="cardList" class="flex flex-col gap-4"></div>
+            <p id="emptyNote" class="hidden text-sm font-medium mt-6">Chưa có flashcard nào — hãy dùng "Active recall" ở trang chính trước.</p>
+        </div>
+
+        <hr class="border-t-4 border-ink my-8" />
+        <p class="text-xs font-medium text-center">Ghi chú: Flashcard được gom từ lịch sử "Active recall" đã lưu theo tài khoản đăng nhập.</p>
+    </div>
+
+    <script src="flashcards.js"></script>
+</body>
+
+</html>

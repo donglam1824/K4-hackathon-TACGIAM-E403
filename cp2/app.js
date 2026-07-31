@@ -264,6 +264,22 @@ function appendAiPending() {
     return appendMessage('ai', `<div class="meta">AI</div><div class="text pending">Đang xử lý...</div>`);
 }
 
+// Gợi ý "Kiểm tra hiểu bài" ngay sau khi AI trả lời/giải thích — ý tưởng cốt lõi của sản phẩm
+// (xác nhận học viên hiểu đúng thay vì rời đi ngay sau khi được trả lời, xem 03-ai-spec.md §4).
+// Tuỳ chọn, có thể bỏ qua (G8) — không tự động kích hoạt kiểm tra.
+function appendCheckSuggestion() {
+    if (pendingCheck) return; // đang có 1 luồng kiểm tra/quiz/mock test khác chạy dở, không chen ngang
+    const div = appendMessage('sys', `
+        <div class="text">🧪 Kiểm tra nhanh xem bạn hiểu đúng chưa?</div>
+        <div class="suggestion-actions">
+            <button class="suggestion-check-btn">Kiểm tra ngay</button>
+            <button class="suggestion-dismiss-btn">Bỏ qua</button>
+        </div>
+    `);
+    div.querySelector('.suggestion-check-btn').addEventListener('click', () => { div.remove(); startCheck(); });
+    div.querySelector('.suggestion-dismiss-btn').addEventListener('click', () => { div.remove(); });
+}
+
 function setPendingCheck(check) {
     pendingCheck = check;
     pendingCheckBar.classList.toggle('hidden', !check);
@@ -478,6 +494,7 @@ async function startSummarize() {
         const result = await summarizeExplain(ref, page);
         pendingEl.innerHTML = `<div class="meta">AI</div><div class="text">${escapeHtml(result)}</div>`;
         logInteraction('summarize', { ref, page, result });
+        appendCheckSuggestion();
     } catch (e) {
         pendingEl.innerHTML = `<div class="meta">AI</div><div class="text">Lỗi: ${escapeHtml(e.message)}</div>`;
     } finally {
@@ -895,6 +912,7 @@ async function handleChatSend() {
             const answer = await askAboutContent(ref, text, currentPageRef || 'N');
             pendingEl.innerHTML = `<div class="meta">AI</div><div class="text">${escapeHtml(answer)}</div>`;
             logInteraction('qa', { ref, page: currentPageRef || 'N', question: text, answer });
+            appendCheckSuggestion();
         }
     } catch (e) {
         pendingEl.innerHTML = `<div class="meta">AI</div><div class="text">Lỗi: ${escapeHtml(e.message)}</div>`;
@@ -907,6 +925,14 @@ async function handleChatSend() {
 chatSend.addEventListener('click', handleChatSend);
 chatInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') handleChatSend();
+});
+
+// ---- Menu "Công cụ khác" thu gọn ----
+const toolsToggle = document.getElementById('toolsToggle');
+const toolsPanel = document.getElementById('toolsPanel');
+toolsToggle?.addEventListener('click', () => {
+    const isHidden = toolsPanel.classList.toggle('hidden');
+    toolsToggle.innerText = isHidden ? 'Công cụ khác ▾' : 'Công cụ khác ▴';
 });
 
 downloadLogs.addEventListener('click', () => {

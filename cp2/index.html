@@ -70,10 +70,16 @@
                 <span class="h-2.5 w-2.5 rounded-full bg-byellow border border-ink"></span>
                 Đang học với tư cách <strong id="sessionStudentName" class="font-black"></strong>
             </span>
-            <button id="logoutBtn"
-                class="bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
-                Đăng xuất
-            </button>
+            <span class="flex items-center gap-2">
+                <a href="flashcards.html"
+                    class="inline-block bg-byellow text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-4 py-1.5 text-xs font-bold uppercase tracking-wider active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                    📚 Ôn flashcard
+                </a>
+                <button id="logoutBtn"
+                    class="bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-4 py-1.5 text-xs font-bold uppercase tracking-wider rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                    Đăng xuất
+                </button>
+            </span>
         </div>
 
         <div id="appMain" class="hidden">
@@ -132,7 +138,19 @@
                             class="bg-ink text-byellow border-2 border-ink px-3 py-1 text-xs font-bold uppercase rounded-none active:translate-x-[2px] active:translate-y-[2px]">Hủy</button>
                     </div>
 
-                    <div class="flex flex-wrap gap-2 mt-4">
+                    <div class="flex gap-2 mt-4">
+                        <input type="text" id="chatInput" placeholder="Nhập câu hỏi hoặc câu trả lời..."
+                            class="flex-1 border-2 border-ink px-3 py-2.5 text-sm font-medium bg-white rounded-none" />
+                        <button id="chatSend"
+                            class="shrink-0 bg-bred text-white border-2 border-ink shadow-[4px_4px_0px_0px_black] px-6 py-2.5 font-bold uppercase tracking-wider rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Gửi</button>
+                    </div>
+
+                    <button id="toolsToggle" type="button"
+                        class="w-full mt-3 bg-white text-ink border-2 border-ink shadow-[3px_3px_0px_0px_black] px-3 py-2 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+                        Công cụ khác ▾
+                    </button>
+
+                    <div id="toolsPanel" class="hidden flex flex-wrap gap-2 mt-2">
                         <button id="actCheck"
                             class="flex-1 min-w-[45%] bg-bred text-white border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Kiểm tra hiểu bài</button>
                         <button id="actSummarize"
@@ -147,13 +165,6 @@
                             class="flex-1 min-w-[45%] bg-white text-ink border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Báo cáo hôm nay</button>
                         <button id="actAssessProgress"
                             class="flex-1 min-w-[45%] bg-white text-ink border-2 border-ink shadow-[4px_4px_0px_0px_black] px-3 py-2.5 text-xs font-bold uppercase tracking-wide rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Đánh giá tiến độ</button>
-                    </div>
-
-                    <div class="flex gap-2 mt-4">
-                        <input type="text" id="chatInput" placeholder="Nhập câu hỏi hoặc câu trả lời..."
-                            class="flex-1 border-2 border-ink px-3 py-2.5 text-sm font-medium bg-white rounded-none" />
-                        <button id="chatSend"
-                            class="shrink-0 bg-bred text-white border-2 border-ink shadow-[4px_4px_0px_0px_black] px-6 py-2.5 font-bold uppercase tracking-wider rounded-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">Gửi</button>
                     </div>
 
                     <div class="mt-4 pt-4 border-t-4 border-ink">
