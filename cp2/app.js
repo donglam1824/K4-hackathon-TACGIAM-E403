@@ -1204,4 +1204,3 @@ function renderDemo(key) {
 }
 
 demoSelect.addEventListener('change', () => renderDemo(demoSelect.value));
-renderDemo(demoSelect.value);
