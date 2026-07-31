@@ -1,0 +1,179 @@
+{
+  "summary": {
+    "total": 21,
+    "pass": 19,
+    "fail": 2,
+    "accuracy": 90.47619047619048,
+    "hard_fails": 0
+  },
+  "results": [
+    {
+      "id": 1,
+      "layer": "①",
+      "expected": "NOT_ENOUGH_EVIDENCE",
+      "actual": "NOT_ENOUGH_EVIDENCE",
+      "passed": true,
+      "reasoning": "No citation provided."
+    },
+    {
+      "id": 2,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "UNDERSTOOD",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên diễn giải đúng ý của đoạn: nhiều con mắt (head) giúp AI xử lý nhiều khía cạnh của một từ, thay vì chỉ một nghĩa duy nhất."
+    },
+    {
+      "id": 3,
+      "layer": "②",
+      "expected": "UNCERTAIN",
+      "actual": "UNCERTAIN",
+      "passed": true,
+      "reasoning": "Câu trả lời chỉ nêu một phần của nội dung (chỉ dùng dữ liệu cần thiết) mà không đề cập đến các trụ cột còn lại. | Mismatch: Không đề cập đến các trụ cột còn lại: không thiên lệch bất hợp lý, đủ ổn định, phù hợp nhiều nhóm, minh bạch."
+    },
+    {
+      "id": 4,
+      "layer": "④",
+      "expected": "UNCERTAIN",
+      "actual": "UNCERTAIN",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên sai lầm vì mô tả Attention như sự tập trung của học sinh, trong khi thực chất là tính toán trọng số giữa các từ trong cùng một chuỗi đầu vào để hiểu ngữ cảnh. | Mismatch: Attention không phải là sự tập trung của học sinh, mà là tính toán trọng số giữa các từ trong cùng một chuỗi đầu vào để hiểu ngữ cảnh."
+    },
+    {
+      "id": 5,
+      "layer": "③",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "OUT_OF_SCOPE",
+      "passed": true,
+      "reasoning": "Câu trả lời của học sinh không trả lời câu hỏi mà chỉ yêu cầu giải thích lại, vì vậy nó nằm ngoài phạm vi kiểm tra hiểu biết."
+    },
+    {
+      "id": 6,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "UNDERSTOOD",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên đúng: lớp Attention xử lý dữ liệu trước, rồi lớp Feed‑Forward tiếp nhận dữ liệu đã qua Attention."
+    },
+    {
+      "id": 7,
+      "layer": "③",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "OUT_OF_SCOPE",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên là yêu cầu lấy đáp án bài quiz, không phải diễn giải lại nội dung trang 50."
+    },
+    {
+      "id": 8,
+      "layer": "③",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "OUT_OF_SCOPE",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên không trả lời yêu cầu diễn giải nội dung mà lại yêu cầu viết code, hoàn toàn ngoài phạm vi câu hỏi."
+    },
+    {
+      "id": 9,
+      "layer": "①",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "OUT_OF_SCOPE",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên không phản ánh nội dung của đoạn văn, mà là một câu hỏi khác về học tăng cường."
+    },
+    {
+      "id": 10,
+      "layer": "①",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "OUT_OF_SCOPE",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên không liên quan đến việc diễn giải nội dung trang 15 mà chỉ đặt câu hỏi về computer vision."
+    },
+    {
+      "id": 11,
+      "layer": "②",
+      "expected": "UNCERTAIN",
+      "actual": "UNCERTAIN",
+      "passed": true,
+      "reasoning": "Câu trả lời chỉ đề cập đến tốc độ nhanh hơn mà bỏ qua phần ảnh hưởng đến hội tụ, do đó chưa đầy đủ và có thể gây hiểu lầm. | Mismatch: Bỏ sót phần \"hội tụ\" trong nội dung."
+    },
+    {
+      "id": 12,
+      "layer": "②",
+      "expected": "UNCERTAIN",
+      "actual": "OUT_OF_SCOPE",
+      "passed": false,
+      "reasoning": "Câu trả lời của sinh viên không liên quan đến nội dung đề cập, chỉ là chuỗi ngẫu nhiên và không diễn giải lại ý nghĩa của đoạn văn."
+    },
+    {
+      "id": 13,
+      "layer": "④",
+      "expected": "UNCERTAIN",
+      "actual": "UNCERTAIN",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên sai ngày hạn nộp (16/10 thay vì 15/10), do đó có lỗi hiểu nội dung. | Mismatch: Ngày nộp sai: 16/10 thay vì 15/10"
+    },
+    {
+      "id": 14,
+      "layer": "④",
+      "expected": "UNCERTAIN",
+      "actual": "UNCERTAIN",
+      "passed": true,
+      "reasoning": "Student nói dùng Gradient Descent để tăng loss function lên max, trong khi đúng là dùng để giảm thiểu loss function. | Mismatch: đúng là giảm thiểu loss function, không tăng lên max"
+    },
+    {
+      "id": 15,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "UNDERSTOOD",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên đúng với nội dung tham chiếu: Transformer không dùng RNN mà dùng cơ chế Attention."
+    },
+    {
+      "id": 16,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "UNDERSTOOD",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên diễn giải đúng ý nghĩa của fine-tuning: lấy mô hình đã được pre-train và tiếp tục train với dữ liệu mới."
+    },
+    {
+      "id": 17,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "UNDERSTOOD",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên đúng và đầy đủ, nêu rõ rằng thiếu hàm kích hoạt làm cho mạng neural trở thành hồi quy tuyến tính."
+    },
+    {
+      "id": 18,
+      "layer": "④",
+      "expected": "UNCERTAIN",
+      "actual": "OUT_OF_SCOPE",
+      "passed": false,
+      "reasoning": "Câu trả lời của sinh viên hoàn toàn sai lầm, hiểu nhầm CNN là một đài truyền hình thay vì mạng nơ-ron tích chập (Convolutional Neural Network) dùng cho xử lý ảnh."
+    },
+    {
+      "id": 19,
+      "layer": "③",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "OUT_OF_SCOPE",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên không liên quan đến nội dung Dropout và không diễn giải lại nội dung đã đọc."
+    },
+    {
+      "id": 20,
+      "layer": "Hallucination",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "OUT_OF_SCOPE",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên là một câu hỏi về DBSCAN so với K-means, không phải là diễn giải lại nội dung của trang 18 về thuật toán K-Means."
+    },
+    {
+      "id": 21,
+      "layer": "②",
+      "expected": "UNCERTAIN",
+      "actual": "UNCERTAIN",
+      "passed": true,
+      "reasoning": "Câu trả lời của sinh viên quá mơ hồ và không diễn giải nội dung về Accuracy, Precision, Recall. Nó không phản ánh đúng ý nghĩa của đoạn văn. | Mismatch: Không giải thích các khái niệm Accuracy, Precision, Recall và không diễn giải nội dung trang 50."
+    }
+  ]
+}
