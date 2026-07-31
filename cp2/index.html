@@ -12,6 +12,20 @@
     <div class="container">
         <h1>CP2 — VLearn: Trợ lý học tập (Prototype)</h1>
 
+        <div id="loginBar" class="login-bar">
+            <label>Nhập tên/mã học viên để bắt đầu (dùng để lưu và tra cứu lịch sử học tập của riêng bạn):</label>
+            <div class="login-row">
+                <input type="text" id="studentIdInput" placeholder="vd: minhquan01" />
+                <button id="loginBtn">Đăng nhập</button>
+            </div>
+        </div>
+
+        <div id="sessionBar" class="session-bar hidden">
+            <span>👤 Đang học với tư cách: <strong id="sessionStudentName"></strong></span>
+            <button id="logoutBtn">Đăng xuất</button>
+        </div>
+
+        <div id="appMain" class="hidden">
         <div class="columns top-row">
             <div class="panel pdf-panel">
                 <h2>Slide PDF</h2>
@@ -60,8 +74,8 @@
                 </div>
 
                 <div class="settings">
-                    <label><input type="checkbox" id="enableLogs" /> Lưu log lần chạy (local)</label>
-                    <div class="small-note" style="text-align:left; margin-top:10px;">LLM Provider: Google Gemini (gemini-3.1-flash-lite) — via Backend</div>
+                    <div class="small-note" style="text-align:left;">LLM Provider: Google Gemini (gemini-3.1-flash-lite) — via Backend</div>
+                    <div class="small-note" style="text-align:left; margin-top:6px;">Lịch sử học được tự động lưu theo tài khoản đang đăng nhập.</div>
                     <button id="downloadLogs" class="hidden" style="margin-top:10px;">Tải logs (JSON)</button>
                 </div>
 
@@ -94,6 +108,8 @@
                     <!-- messages inserted here -->
                 </div>
             </div>
+        </div>
+
         </div>
 
         <hr />

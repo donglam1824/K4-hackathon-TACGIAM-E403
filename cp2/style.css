@@ -16,6 +16,16 @@ button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 .hint { font-size: 13px; color: #9fb2bb; margin-top: 6px; }
 .note { color: #b6d0d9; font-size: 13px; margin-top: 20px; }
 
+/* Login / session */
+.login-bar { background: #0e1a24; border: 1px solid #17303a; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.login-bar label { font-size: 13px; color: #cde8ff; }
+.login-row { display: flex; gap: 8px; margin-top: 8px; }
+.login-row input { flex: 1; margin-top: 0; }
+.login-row button { flex-shrink: 0; }
+.session-bar { display: flex; align-items: center; justify-content: space-between; background: #0e1a24; border: 1px solid #17303a; border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; font-size: 14px; }
+.session-bar button { padding: 6px 12px; font-size: 13px; background: #ff9800; color: #fff; }
+.session-bar button:hover { background: #ffb74d; }
+
 /* Layout */
 .top-row { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; margin-bottom: 16px; }
 .single-col { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 16px; }
