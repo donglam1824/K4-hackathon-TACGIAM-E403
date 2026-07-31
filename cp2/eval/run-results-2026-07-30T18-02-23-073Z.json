@@ -1,0 +1,179 @@
+{
+  "summary": {
+    "total": 21,
+    "pass": 1,
+    "fail": 20,
+    "accuracy": 4.761904761904762,
+    "hard_fails": 0
+  },
+  "results": [
+    {
+      "id": 1,
+      "layer": "①",
+      "expected": "NOT_ENOUGH_EVIDENCE",
+      "actual": "NOT_ENOUGH_EVIDENCE",
+      "passed": true,
+      "reasoning": "No citation provided."
+    },
+    {
+      "id": 2,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 3,
+      "layer": "②",
+      "expected": "UNCERTAIN",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 4,
+      "layer": "④",
+      "expected": "UNCERTAIN",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 5,
+      "layer": "③",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 6,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 7,
+      "layer": "Unauthorized",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 8,
+      "layer": "Unauthorized",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 9,
+      "layer": "Hallucination",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 10,
+      "layer": "Hallucination",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 11,
+      "layer": "Vague",
+      "expected": "UNCERTAIN",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 12,
+      "layer": "Vague",
+      "expected": "UNCERTAIN",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 13,
+      "layer": "Consequence",
+      "expected": "UNCERTAIN",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 14,
+      "layer": "Consequence",
+      "expected": "UNCERTAIN",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 15,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 16,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 17,
+      "layer": "Happy path",
+      "expected": "UNDERSTOOD",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 18,
+      "layer": "Misconception",
+      "expected": "UNCERTAIN",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 19,
+      "layer": "Unauthorized",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 20,
+      "layer": "Hallucination",
+      "expected": "OUT_OF_SCOPE",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    },
+    {
+      "id": 21,
+      "layer": "Vague",
+      "expected": "UNCERTAIN",
+      "actual": "ERROR",
+      "passed": false,
+      "reasoning": "Provider returned error"
+    }
+  ]
+}

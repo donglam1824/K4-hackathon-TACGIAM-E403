@@ -1,40 +1,53 @@
-*{box-sizing:border-box;font-family:Segoe UI, Roboto, Arial, sans-serif}
-body{background:#0f1720;color:#e6eef8;margin:0;padding:20px}
-.container{max-width:1100px;margin:0 auto}
-h1{color:#ffd86b}
-.columns{display:flex;gap:16px}
-.panel{flex:1;background:#0e1a24;padding:14px;border-radius:8px;border:1px solid #17303a}
-.doc{min-height:220px;background:#071016;padding:10px;border-radius:6px;outline:2px dashed rgba(255,255,255,0.03);overflow:auto}
-textarea, input{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #25353f;background:#071216;color:#eaf6ff}
-.buttons{display:flex;gap:8px;margin-top:8px}
-button{background:#2da3ff;color:#012;padding:8px 12px;border-radius:6px;border:none;cursor:pointer}
-button#clearBtn{background:#ff6b6b;color:#fff}
-.result{min-height:160px;background:#071018;padding:12px;border-radius:6px;border:1px solid #18303a}
-.hint{font-size:13px;color:#9fb2bb;margin-top:6px}
-.note{color:#b6d0d9}
-.flow-controls{display:flex;gap:8px;margin-top:10px}
-.selected{background:linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-/* New layout for quick-check prototype */
-.three-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-.chatArea{min-height:260px;background:#061219;padding:10px;border-radius:6px;overflow:auto;border:1px solid #15303a;margin-top:8px}
-.chatMsg{padding:10px;border-radius:8px;margin-bottom:8px;background:linear-gradient(180deg,#07202a,#04151a);border:1px solid #12303a}
-.chatMsg .meta{font-size:12px;color:#9fb2bb;margin-bottom:6px}
-.chatMsg .text{white-space:pre-wrap;color:#e6eef8}
-.quick-check{margin-top:10px}
-.hidden{display:none}
-.student-panel textarea{min-height:80px}
-.result-panel .result{min-height:120px}
-.explain{margin-top:10px;color:#cde8ff;background:#041726;padding:10px;border-radius:6px;border:1px solid #12303a}
-.settings{margin-top:10px;font-size:13px;color:#9fb2bb}
-.small-note{font-size:12px;color:#9fb2bb;margin-top:6px}
-.badge{display:inline-block;padding:8px 12px;border-radius:8px;color:#05151a;font-weight:600}
-.badge.good{background:linear-gradient(90deg,#c6f6d5,#8ef0a3)}
-.badge.warn{background:linear-gradient(90deg,#fff3bf,#ffd86b)}
-.badge.bad{background:linear-gradient(90deg,#ffd6d6,#ff8b8b)}
-.badge.processing{background:linear-gradient(90deg,#cfe9ff,#8fd4ff);color:#002433}
-.chat-panel .chatMsg{position:relative;padding-bottom:28px}
-.chat-panel .chatMsg .meta{position:absolute;right:10px;top:8px;font-size:12px}
-.quick-check{margin-top:8px}
-.quick-check button{background:#ffd86b;color:#062;padding:10px 12px;border-radius:8px}
-.quick-check .small-note{margin-top:6px}
+* { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background: #0f1720; color: #e6eef8; margin: 0; padding: 20px; }
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { color: #ffd86b; font-weight: 600; }
+.columns { display: flex; gap: 16px; }
+.panel { flex: 1; background: #0e1a24; padding: 16px; border-radius: 12px; border: 1px solid #17303a; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+textarea, input, select { width: 100%; padding: 10px; margin-top: 6px; border-radius: 8px; border: 1px solid #25353f; background: #071216; color: #eaf6ff; font-size: 14px; transition: border-color 0.2s; }
+textarea:focus, input:focus, select:focus { outline: none; border-color: #2da3ff; }
+.buttons { display: flex; gap: 8px; margin-top: 12px; }
+button { background: #2da3ff; color: #012; padding: 10px 14px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; transition: background 0.2s, transform 0.1s; }
+button:hover { background: #5bb3ff; transform: translateY(-1px); }
+button:active { transform: translateY(0); }
+button#retryAnswer { background: #ff9800; color: #fff; }
+button#retryAnswer:hover { background: #ffb74d; }
+.result { min-height: 160px; background: #071018; padding: 16px; border-radius: 8px; border: 1px solid #18303a; transition: all 0.3s ease; }
+.explain { margin-top: 12px; color: #cde8ff; background: #041726; padding: 12px; border-radius: 8px; border: 1px solid #12303a; font-size: 14px; line-height: 1.5; }
+.trace { margin-top: 12px; color: #9fb2bb; background: #031018; padding: 10px; border-radius: 6px; border: 1px dashed #25353f; font-size: 12px; }
+.hint { font-size: 13px; color: #9fb2bb; margin-top: 6px; }
+.note { color: #b6d0d9; font-size: 13px; margin-top: 20px; }
+
+/* Layout */
+.three-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.chatArea { min-height: 260px; background: #061219; padding: 12px; border-radius: 8px; overflow: auto; border: 1px solid #15303a; margin-top: 12px; }
+.chatMsg { padding: 12px; border-radius: 10px; margin-bottom: 10px; background: linear-gradient(180deg, #07202a, #04151a); border: 1px solid #12303a; position: relative; padding-bottom: 32px; }
+.chatMsg .meta { position: absolute; right: 12px; top: 10px; font-size: 12px; color: #9fb2bb; }
+.chatMsg .text { white-space: pre-wrap; color: #e6eef8; line-height: 1.5; font-size: 14px; margin-top: 8px;}
+.quick-check { margin-top: 12px; }
+.hidden { display: none !important; }
+.student-panel textarea { min-height: 90px; }
+.result-panel .result { min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center;}
+.settings { margin-top: 16px; font-size: 13px; color: #9fb2bb; padding-top: 12px; border-top: 1px solid #17303a; }
+.small-note { font-size: 12px; color: #9fb2bb; margin-top: 6px; text-align: center;}
+
+/* Badges */
+.badge { display: inline-block; padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.badge.good { background: linear-gradient(90deg, #c6f6d5, #8ef0a3); color: #052c15; }
+.badge.warn { background: linear-gradient(90deg, #fff3bf, #ffd86b); color: #332600; }
+.badge.bad { background: linear-gradient(90deg, #ffd6d6, #ff8b8b); color: #330000; }
+.badge.outofscope { background: linear-gradient(90deg, #e9d5ff, #c084fc); color: #2e1065; }
+.badge.processing { background: linear-gradient(90deg, #cfe9ff, #8fd4ff); color: #002433; animation: pulse 1.5s infinite; }
+
+.badge-difficulty { display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; background: #25353f; color: #ffd86b; border: 1px solid #4a5c68; }
+
+.quick-check button { background: #ffd86b; color: #062; padding: 10px 12px; border-radius: 8px; width: 100%; font-weight: 600; font-size: 14px;}
+.quick-check button:hover { background: #ffe391; }
+
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}

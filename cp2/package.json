@@ -1,0 +1,16 @@
+{
+  "name": "quick-check-prototype",
+  "version": "1.0.0",
+  "description": "VLearn Quick-Check Prototype Backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "eval": "node eval/run-golden-set.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-fetch": "^2.7.0"
+  }
+}

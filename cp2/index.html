@@ -19,7 +19,10 @@
                 <select id="demoSelect" aria-label="Chọn conversation demo">
                     <option value="case1">C0025 T0708 — Happy path (có citations)</option>
                     <option value="case2">C0096 T0558 — Edge case (mơ hồ)</option>
+                    <option value="case3">C0063 T0849 — Tutor kiểm tra (lớp 4)</option>
+                    <option value="case4">C0220 T0939 — Không có citations (lớp 1)</option>
                 </select>
+                <div id="difficultyBadge" class="badge-difficulty hidden">Lớp: <span id="layerNum"></span></div>
 
                 <div id="chatArea" class="chatArea">
                     <!-- messages inserted here -->
@@ -48,9 +51,8 @@
                 </div>
 
                 <div class="settings">
-                    <label>API key (tùy chọn, dán nếu muốn dùng OpenAI thực):</label>
-                    <input id="apiKey" placeholder="sk-... (optional)" />
                     <label><input type="checkbox" id="enableLogs" /> Lưu log lần chạy (local)</label>
+                    <div class="small-note" style="text-align:left; margin-top:10px;">LLM Provider: OpenRouter (Google Gemma 4 31B Free) — via Backend</div>
                 </div>
             </div>
 
@@ -58,7 +60,11 @@
                 <h2>Kết quả chấm AI</h2>
                 <div id="gradingResult" class="result">Chưa có kết quả chấm.</div>
                 <div id="explainArea" class="explain"></div>
+                <div id="traceArea" class="trace hidden">
+                    <strong>AI Trace:</strong> <span id="traceContent"></span>
+                </div>
                 <div class="buttons">
+                    <button id="retryAnswer" class="hidden">Trả lời lại</button>
                     <button id="downloadLogs" class="hidden">Tải logs (JSON)</button>
                 </div>
             </div>
@@ -69,6 +75,7 @@
             CP2).</p>
     </div>
 
+    <script src="prompts.js"></script>
     <script src="app.js"></script>
 </body>
 
