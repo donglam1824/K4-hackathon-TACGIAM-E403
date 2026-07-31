@@ -57,7 +57,7 @@ app.post('/api/logs/:studentId', (req, res) => {
 
 app.post('/api/chat', async (req, res) => {
     try {
-        const { systemPrompt, userPrompt } = req.body;
+        const { systemPrompt, userPrompt, jsonMode } = req.body;
 
         if (!GEMINI_API_KEY) {
             return res.status(500).json({ error: 'Missing GEMINI_API_KEY in .env file.' });
@@ -65,6 +65,12 @@ app.post('/api/chat', async (req, res) => {
 
         const model = 'gemini-3.1-flash-lite';
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+
+        const generationConfig = {
+            temperature: 0.2,
+            maxOutputTokens: 4096
+        };
+        if (jsonMode) generationConfig.responseMimeType = 'application/json';
 
         const response = await fetch(url, {
             method: 'POST',
@@ -78,9 +84,7 @@ app.post('/api/chat', async (req, res) => {
                 contents: [
                     { role: 'user', parts: [{ text: userPrompt }] }
                 ],
-                generationConfig: {
-                    temperature: 0.2
-                }
+                generationConfig
             })
         });
 
@@ -89,7 +93,15 @@ app.post('/api/chat', async (req, res) => {
             throw new Error(j.error.message);
         }
 
-        res.json({ result: j.candidates[0].content.parts[0].text });
+        const candidate = j.candidates && j.candidates[0];
+        const text = candidate && candidate.content && candidate.content.parts && candidate.content.parts[0] && candidate.content.parts[0].text;
+
+        if (!text) {
+            const reason = (j.promptFeedback && j.promptFeedback.blockReason) || (candidate && candidate.finishReason) || 'unknown';
+            throw new Error(`Gemini không trả về nội dung (finishReason/blockReason: ${reason}). Thử rút ngắn đoạn tài liệu tham chiếu hoặc thử lại.`);
+        }
+
+        res.json({ result: text });
 
     } catch (error) {
         console.error('LLM API Error:', error);

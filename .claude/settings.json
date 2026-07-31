@@ -25,7 +25,8 @@
       "Read(//d//**)",
       "Bash(cygpath -w /tmp/babel.min.js)",
       "Bash(node -e \"console.log\\(require\\('fs'\\).existsSync\\('/tmp/babel.min.js'\\)\\)\")",
-      "Bash(node \"C:/Users/cable/AppData/Local/Temp/claude/d--VIN-AI-THUC-CHIEN-Labs-Day05-06-K4-hackathon-TACGIAM-E403/51ce2833-77ea-46fc-8fa2-2664e63228d6/scratchpad/validate-jsx.js\" app.js)"
+      "Bash(node \"C:/Users/cable/AppData/Local/Temp/claude/d--VIN-AI-THUC-CHIEN-Labs-Day05-06-K4-hackathon-TACGIAM-E403/51ce2833-77ea-46fc-8fa2-2664e63228d6/scratchpad/validate-jsx.js\" app.js)",
+      "Bash(taskkill //PID 14316 //F)"
     ]
   }
 }

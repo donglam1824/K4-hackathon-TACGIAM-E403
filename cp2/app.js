@@ -77,6 +77,7 @@ async function logInteraction(type, data) {
     const entry = { ts: new Date().toISOString(), type, ...data };
     logs.push(entry);
     downloadLogs.classList.remove('hidden');
+    renderHistoryList();
 
     try {
         await fetch(`http://localhost:3000/api/logs/${encodeURIComponent(currentStudentId)}`, {
@@ -87,6 +88,86 @@ async function logInteraction(type, data) {
     } catch (e) {
         console.warn('Không lưu được lịch sử học lên server:', e);
     }
+}
+
+function badgeFor(label) {
+    if (label === 'UNDERSTOOD') return { label: '✅ Hiểu đúng', cls: 'good' };
+    if (label === 'UNCERTAIN') return { label: '⚠️ Chưa chắc / Mơ hồ', cls: 'warn' };
+    if (label === 'OUT_OF_SCOPE') return { label: '🚫 Lạc đề / Ngoài phạm vi', cls: 'outofscope' };
+    return { label: `❌ ${label}`, cls: 'bad' };
+}
+
+// ---- Lịch sử hội thoại đã hỏi (gom theo đoạn tài liệu tham chiếu) ----
+const historyList = document.getElementById('historyList');
+
+function computeConversationSessions() {
+    const map = new Map();
+    logs.forEach((l) => {
+        if (!l.ref || !l.ref.trim()) return; // bỏ qua log không gắn với 1 đoạn tài liệu cụ thể
+        if (!map.has(l.ref)) {
+            map.set(l.ref, { ref: l.ref, page: l.page || 'N', firstTs: l.ts, lastTs: l.ts, count: 0 });
+        }
+        const session = map.get(l.ref);
+        session.count++;
+        if (l.ts < session.firstTs) session.firstTs = l.ts;
+        if (l.ts > session.lastTs) session.lastTs = l.ts;
+        if (l.page) session.page = l.page;
+    });
+    return Array.from(map.values()).sort((a, b) => (a.lastTs < b.lastTs ? 1 : -1));
+}
+
+function renderHistoryList() {
+    if (!historyList) return;
+    const sessions = computeConversationSessions();
+    if (sessions.length === 0) {
+        historyList.innerHTML = `<p class="text-xs font-medium">Chưa có hội thoại nào được lưu.</p>`;
+        return;
+    }
+    historyList.innerHTML = sessions.map((s, i) => {
+        const preview = s.ref.length > 80 ? s.ref.slice(0, 80) + '…' : s.ref;
+        const dateStr = new Date(s.lastTs).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+        return `
+        <div class="history-item" data-index="${i}">
+            <div class="history-main">
+                <div class="history-preview">${escapeHtml(preview)}</div>
+                <div class="history-meta">Trang ${escapeHtml(s.page)} · ${s.count} lượt hỏi · lần cuối ${dateStr}</div>
+            </div>
+            <span class="history-badge">Quay lại</span>
+        </div>`;
+    }).join('');
+
+    historyList.querySelectorAll('.history-item').forEach((el, i) => {
+        el.addEventListener('click', () => resumeConversation(sessions[i]));
+    });
+}
+
+function resumeConversation(session) {
+    currentPageRef = session.page || null;
+    refText.value = session.ref;
+    setPendingCheck(null);
+    assistantMessages.innerHTML = '';
+    difficultyBadge.classList.add('hidden');
+
+    appendMessage('sys', `<div class="text">📂 Đã khôi phục hội thoại — trang ${escapeHtml(session.page)}. Xem lại bên dưới, hoặc hỏi tiếp.</div>`);
+
+    const relevant = logs.filter(l => l.ref === session.ref).sort((a, b) => (a.ts < b.ts ? -1 : 1));
+    relevant.forEach((l) => {
+        if (l.type === 'qa') {
+            appendUserText(l.question);
+            appendMessage('ai', `<div class="meta">AI</div><div class="text">${escapeHtml(l.answer)}</div>`);
+        } else if (l.type === 'summarize') {
+            appendMessage('sys', `<div class="text">🔎 Tóm tắt / giải thích đoạn tài liệu hiện tại</div>`);
+            appendMessage('ai', `<div class="meta">AI</div><div class="text">${escapeHtml(l.result)}</div>`);
+        } else if (l.type === 'check_grade' || l.type === 'quiz_answer') {
+            appendUserText(l.answer);
+            const badge = badgeFor(l.result && l.result.label);
+            appendMessage('ai', `<div class="meta">AI</div><div class="badge ${badge.cls}">${badge.label}</div><div class="text">${escapeHtml((l.result && l.result.explain) || '')}</div>`);
+        } else if (l.type === 'mocktest_finish') {
+            appendMessage('ai', `<div class="meta">AI</div><div class="badge ${l.passed ? 'good' : 'bad'}">${l.passed ? '✅ Đạt' : '❌ Chưa đạt'} — ${l.correctCount}/${l.total} câu (${l.percent}%)</div><div class="text">Ôn thi mock test đã hoàn thành.</div>`);
+        }
+    });
+
+    appendMessage('sys', `<div class="text">Tiếp tục hỏi ở ô chat bên dưới nhé.</div>`);
 }
 
 function rebuildMisconceptionsFromLogs() {
@@ -134,6 +215,7 @@ async function doLogin(rawId) {
     currentStudentId = id;
     localStorage.setItem(STUDENT_ID_STORAGE_KEY, id);
     rebuildMisconceptionsFromLogs();
+    renderHistoryList();
     if (logs.length > 0) downloadLogs.classList.remove('hidden');
 
     sessionStudentName.innerText = id;
@@ -148,6 +230,7 @@ function doLogout() {
     logs = [];
     misconceptions = [];
     renderMisconceptions();
+    renderHistoryList();
     downloadLogs.classList.add('hidden');
 
     studentIdInput.value = '';
@@ -201,9 +284,9 @@ function resetContext(introText) {
     if (introText) appendMessage('sys', `<div class="text">${escapeHtml(introText)}</div>`);
 }
 
-async function callLLM(systemPrompt, userPrompt) {
+async function callLLM(systemPrompt, userPrompt, jsonMode = false) {
     const url = 'http://localhost:3000/api/chat';
-    const payload = { systemPrompt, userPrompt };
+    const payload = { systemPrompt, userPrompt, jsonMode };
 
     const resp = await fetch(url, {
         method: 'POST',
@@ -222,19 +305,29 @@ async function callLLM(systemPrompt, userPrompt) {
     return j.result;
 }
 
+// Gemini đôi khi bọc JSON trong ```json ... ``` dù đã yêu cầu trả JSON thuần —
+// bóc fence trước khi parse để tránh crash "Unexpected token".
+function parseJsonLoose(text) {
+    let t = String(text || '').trim();
+    if (t.startsWith('```')) {
+        t = t.replace(/^```[a-zA-Z]*\r?\n?/, '').replace(/```\s*$/, '').trim();
+    }
+    return JSON.parse(t);
+}
+
 async function generateQuestion(ref, page) {
     const sysPrompt = systemPrompts.generateCheckQuestion.replace(/{PAGE}/g, page);
     const usrPrompt = `Reference Text:\n${ref}`;
-    const resultText = await callLLM(sysPrompt, usrPrompt);
-    const parsed = JSON.parse(resultText);
+    const resultText = await callLLM(sysPrompt, usrPrompt, true);
+    const parsed = parseJsonLoose(resultText);
     return parsed.question || resultText;
 }
 
 async function gradeAnswer(ref, question, answer, page) {
     const sysPrompt = systemPrompts.gradeStudentAnswer.replace(/{PAGE}/g, page);
     const usrPrompt = `Reference:\n${ref}\n\nQuestion asked:\n${question}\n\nStudent answer:\n${answer}`;
-    const resultText = await callLLM(sysPrompt, usrPrompt);
-    return JSON.parse(resultText);
+    const resultText = await callLLM(sysPrompt, usrPrompt, true);
+    return parseJsonLoose(resultText);
 }
 
 async function askAboutContent(ref, question, page) {
@@ -252,16 +345,16 @@ async function summarizeExplain(ref, page) {
 async function generateQuiz(ref, page, count) {
     const sysPrompt = systemPrompts.generateQuiz.replace(/{PAGE}/g, page).replace(/{COUNT}/g, count);
     const usrPrompt = `Reference Text:\n${ref}`;
-    const resultText = await callLLM(sysPrompt, usrPrompt);
-    const parsed = JSON.parse(resultText);
+    const resultText = await callLLM(sysPrompt, usrPrompt, true);
+    const parsed = parseJsonLoose(resultText);
     return (parsed.questions || []).map(q => q.question).filter(Boolean);
 }
 
 async function generateFlashcards(ref, page, count) {
     const sysPrompt = systemPrompts.generateFlashcards.replace(/{PAGE}/g, page).replace(/{COUNT}/g, count);
     const usrPrompt = `Reference Text:\n${ref}`;
-    const resultText = await callLLM(sysPrompt, usrPrompt);
-    const parsed = JSON.parse(resultText);
+    const resultText = await callLLM(sysPrompt, usrPrompt, true);
+    const parsed = parseJsonLoose(resultText);
     return parsed.cards || [];
 }
 
@@ -310,8 +403,8 @@ function renderFlashcard(card, index, total, page) {
 async function generateFollowUp(ref, question, answer, mismatchDetail, page) {
     const sysPrompt = systemPrompts.narrowFollowUp.replace(/{PAGE}/g, page);
     const usrPrompt = `Reference:\n${ref}\n\nOriginal question:\n${question}\n\nStudent answer:\n${answer}\n\nWhat was wrong/unclear:\n${mismatchDetail || 'Vague or incomplete answer.'}`;
-    const resultText = await callLLM(sysPrompt, usrPrompt);
-    const parsed = JSON.parse(resultText);
+    const resultText = await callLLM(sysPrompt, usrPrompt, true);
+    const parsed = parseJsonLoose(resultText);
     return parsed.question;
 }
 
@@ -851,6 +944,7 @@ let pdfPageNum = 1;
 let pdfRenderTask = null;
 let pdfScale = null; // null = chưa tính, sẽ auto-fit theo chiều rộng khung khi mở file/lật trang mới
 let pdfFitScale = 1; // scale tương ứng "vừa khung" (100%), dùng làm mốc hiển thị % zoom
+let pdfAutoFit = true; // true: luôn tính lại "vừa khung" khi khung đổi kích thước (resize/responsive)
 const PDF_MIN_ZOOM_RATIO = 0.4;
 const PDF_MAX_ZOOM_RATIO = 3;
 
@@ -932,6 +1026,7 @@ pdfFileInput?.addEventListener('change', async (e) => {
         const buf = await file.arrayBuffer();
         pdfDoc = await pdfjsLib.getDocument({ data: buf }).promise;
         pdfPageCountEl.innerText = pdfDoc.numPages;
+        pdfAutoFit = true;
         pdfScale = null; // file mới -> tính lại "vừa khung" theo kích thước trang đầu
         renderPdfPage(1);
     } catch (err) {
@@ -942,18 +1037,21 @@ pdfFileInput?.addEventListener('change', async (e) => {
 
 pdfZoomInBtn?.addEventListener('click', () => {
     if (!pdfDoc || pdfScale === null) return;
+    pdfAutoFit = false; // đã zoom tay -> không tự fit lại khi resize nữa
     pdfScale = Math.min(pdfFitScale * PDF_MAX_ZOOM_RATIO, pdfScale * 1.2);
     renderPdfPage(pdfPageNum);
 });
 
 pdfZoomOutBtn?.addEventListener('click', () => {
     if (!pdfDoc || pdfScale === null) return;
+    pdfAutoFit = false;
     pdfScale = Math.max(pdfFitScale * PDF_MIN_ZOOM_RATIO, pdfScale / 1.2);
     renderPdfPage(pdfPageNum);
 });
 
 pdfZoomResetBtn?.addEventListener('click', () => {
     if (!pdfDoc) return;
+    pdfAutoFit = true;
     pdfScale = null; // buộc tính lại đúng "vừa khung"
     renderPdfPage(pdfPageNum);
 });
@@ -964,6 +1062,18 @@ pdfPrevBtn?.addEventListener('click', () => {
 
 pdfNextBtn?.addEventListener('click', () => {
     if (pdfDoc && pdfPageNum < pdfDoc.numPages) renderPdfPage(pdfPageNum + 1);
+});
+
+// Responsive: tự tính lại "vừa khung" khi cửa sổ đổi kích thước (vd. xoay điện thoại,
+// hoặc layout co từ 2 cột xuống 1 cột trên mobile), chỉ khi người dùng chưa tự zoom tay.
+let pdfResizeTimer = null;
+window.addEventListener('resize', () => {
+    if (!pdfDoc || !pdfAutoFit) return;
+    clearTimeout(pdfResizeTimer);
+    pdfResizeTimer = setTimeout(() => {
+        pdfScale = null;
+        renderPdfPage(pdfPageNum);
+    }, 200);
 });
 
 pdfTextLayerDiv?.addEventListener('mouseup', () => {
