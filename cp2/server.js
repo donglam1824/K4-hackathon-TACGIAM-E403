@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const fetch = require('node-fetch');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 app.use(cors());
@@ -12,6 +14,46 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // Phục vụ các file tĩnh (html, css, js) trong thư mục hiện tại
 app.use(express.static(__dirname));
+
+// Lưu lịch sử học theo từng user — đặt NGOÀI thư mục cp2/ để express.static
+// (phục vụ toàn bộ __dirname) không bao giờ trả file dữ liệu này qua HTTP.
+const USER_DATA_DIR = path.join(__dirname, '..', 'user-data');
+if (!fs.existsSync(USER_DATA_DIR)) fs.mkdirSync(USER_DATA_DIR, { recursive: true });
+
+function studentFilePath(studentId) {
+    const safeId = String(studentId || '').trim().replace(/[^a-zA-Z0-9_\-]/g, '').slice(0, 64);
+    if (!safeId) return null;
+    return path.join(USER_DATA_DIR, `${safeId}.json`);
+}
+
+app.get('/api/logs/:studentId', (req, res) => {
+    const filePath = studentFilePath(req.params.studentId);
+    if (!filePath) return res.status(400).json({ error: 'Invalid studentId' });
+
+    if (!fs.existsSync(filePath)) return res.json({ logs: [] });
+    try {
+        const logs = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        res.json({ logs });
+    } catch (e) {
+        res.status(500).json({ error: 'Could not read learning history: ' + e.message });
+    }
+});
+
+app.post('/api/logs/:studentId', (req, res) => {
+    const filePath = studentFilePath(req.params.studentId);
+    if (!filePath) return res.status(400).json({ error: 'Invalid studentId' });
+
+    const entry = req.body && req.body.entry;
+    if (!entry || typeof entry !== 'object') return res.status(400).json({ error: 'Missing entry' });
+
+    let logs = [];
+    if (fs.existsSync(filePath)) {
+        try { logs = JSON.parse(fs.readFileSync(filePath, 'utf8')); } catch (e) { logs = []; }
+    }
+    logs.push(entry);
+    fs.writeFileSync(filePath, JSON.stringify(logs, null, 2));
+    res.json({ ok: true });
+});
 
 app.post('/api/chat', async (req, res) => {
     try {

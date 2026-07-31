@@ -9,7 +9,15 @@
       "Bash(node --check server.js)",
       "Bash(node --check eval/run-golden-set.js)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git rev-list *)",
+      "Bash(git push *)",
+      "Read(//tmp/**)",
+      "Bash(netstat -ano)",
+      "Bash(rm -f ../user-data/testuser01.json)",
+      "Bash(pkill -f \"PORT=3999\")",
+      "Bash(taskkill //F //IM node.exe //FI \"WINDOWTITLE eq *3999*\")",
+      "Bash(taskkill //PID 7408 //F)"
     ]
   }
 }

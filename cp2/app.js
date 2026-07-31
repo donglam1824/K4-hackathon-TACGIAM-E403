@@ -1,7 +1,6 @@
 // CP2 -> unified chatbox prototype logic
 const demoSelect = document.getElementById('demoSelect');
 const refText = document.getElementById('refText');
-const enableLogs = document.getElementById('enableLogs');
 const downloadLogs = document.getElementById('downloadLogs');
 const difficultyBadge = document.getElementById('difficultyBadge');
 const layerNum = document.getElementById('layerNum');
@@ -21,8 +20,9 @@ const actAssessProgress = document.getElementById('actAssessProgress');
 const chatInput = document.getElementById('chatInput');
 const chatSend = document.getElementById('chatSend');
 
-let logs = JSON.parse(localStorage.getItem('quickcheck_logs') || '[]');
+let logs = [];
 let currentPageRef = null;
+let currentStudentId = null;
 // pendingCheck: { mode: 'check', ref, page, question, depth } khi đang chờ trả lời 1 câu kiểm tra hiểu bài
 //            hoặc { mode: 'quiz', ref, page, questions, index, correctCount, results } khi đang làm quiz nhiều câu
 //            hoặc { mode: 'mocktest', ref, page, questions, index, answers, deadline } khi đang ôn thi mock test
@@ -72,12 +72,96 @@ function escapeHtml(str) {
         .replace(/>/g, '&gt;');
 }
 
-function logInteraction(type, data) {
-    if (!enableLogs.checked) return;
-    logs.push({ ts: new Date().toISOString(), type, ...data });
-    localStorage.setItem('quickcheck_logs', JSON.stringify(logs));
+async function logInteraction(type, data) {
+    if (!currentStudentId) return;
+    const entry = { ts: new Date().toISOString(), type, ...data };
+    logs.push(entry);
     downloadLogs.classList.remove('hidden');
+
+    try {
+        await fetch(`http://localhost:3000/api/logs/${encodeURIComponent(currentStudentId)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ entry })
+        });
+    } catch (e) {
+        console.warn('Không lưu được lịch sử học lên server:', e);
+    }
 }
+
+function rebuildMisconceptionsFromLogs() {
+    misconceptions = [];
+    logs.forEach((l) => {
+        if ((l.type === 'check_grade' || l.type === 'quiz_answer') && l.result && l.result.label === 'UNCERTAIN') {
+            misconceptions.push({ page: l.page, question: l.question, answer: l.answer, detail: l.result.mismatch_detail || l.result.explain });
+        } else if (l.type === 'mocktest_finish') {
+            (l.results || []).forEach((r) => {
+                if (r.label === 'UNCERTAIN') {
+                    misconceptions.push({ page: l.page, question: r.question, answer: r.answer, detail: '' });
+                }
+            });
+        } else if (l.type === 'recall_result' && l.remembered === false) {
+            misconceptions.push({ page: l.page, question: l.question, answer: '(không nhớ)', detail: l.answer ? `Đáp án đúng: ${l.answer}` : '' });
+        }
+    });
+    renderMisconceptions();
+}
+
+// ---- Đăng nhập / phiên học ----
+const loginBar = document.getElementById('loginBar');
+const sessionBar = document.getElementById('sessionBar');
+const appMain = document.getElementById('appMain');
+const studentIdInput = document.getElementById('studentIdInput');
+const loginBtn = document.getElementById('loginBtn');
+const sessionStudentName = document.getElementById('sessionStudentName');
+const logoutBtn = document.getElementById('logoutBtn');
+const STUDENT_ID_STORAGE_KEY = 'vlearn_student_id';
+
+async function doLogin(rawId) {
+    const id = rawId.trim();
+    if (!id) { alert('Vui lòng nhập tên/mã học viên.'); return; }
+
+    try {
+        const resp = await fetch(`http://localhost:3000/api/logs/${encodeURIComponent(id)}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        logs = data.logs || [];
+    } catch (e) {
+        alert('Không tải được lịch sử học: ' + e.message);
+        return;
+    }
+
+    currentStudentId = id;
+    localStorage.setItem(STUDENT_ID_STORAGE_KEY, id);
+    rebuildMisconceptionsFromLogs();
+    if (logs.length > 0) downloadLogs.classList.remove('hidden');
+
+    sessionStudentName.innerText = id;
+    loginBar.classList.add('hidden');
+    sessionBar.classList.remove('hidden');
+    appMain.classList.remove('hidden');
+}
+
+function doLogout() {
+    currentStudentId = null;
+    localStorage.removeItem(STUDENT_ID_STORAGE_KEY);
+    logs = [];
+    misconceptions = [];
+    renderMisconceptions();
+    downloadLogs.classList.add('hidden');
+
+    studentIdInput.value = '';
+    loginBar.classList.remove('hidden');
+    sessionBar.classList.add('hidden');
+    appMain.classList.add('hidden');
+}
+
+loginBtn.addEventListener('click', () => doLogin(studentIdInput.value));
+studentIdInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doLogin(studentIdInput.value); });
+logoutBtn.addEventListener('click', doLogout);
+
+const savedStudentId = localStorage.getItem(STUDENT_ID_STORAGE_KEY);
+if (savedStudentId) doLogin(savedStudentId);
 
 // ---- Chatbox trợ lý học tập (gộp: hỏi đáp tự do, tóm tắt, kiểm tra hiểu bài) ----
 function appendMessage(role, innerHtml) {
