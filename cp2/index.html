@@ -10,110 +10,99 @@
 
 <body>
     <div class="container">
-        <h1>CP2 — VLearn: Bôi đen + Hỏi (Prototype)</h1>
+        <h1>CP2 — VLearn: Trợ lý học tập (Prototype)</h1>
 
-        <div class="columns three-cols">
-            <div class="panel chat-panel">
-                <h2>Hội thoại (mô phỏng)</h2>
-                <label>Chọn conversation demo:</label>
-                <select id="demoSelect" aria-label="Chọn conversation demo">
-                    <option value="case1">C0025 T0708 — Happy path (có citations)</option>
-                    <option value="case2">C0096 T0558 — Happy path (5 trụ cột, để test lớp ④)</option>
-                    <option value="case3">C0220 T0939 — Lớp ① (citations=[], không đủ căn cứ)</option>
-                </select>
-
-                <div id="chatArea" class="chatArea">
-                    <!-- messages inserted here -->
+        <div class="columns top-row">
+            <div class="panel pdf-panel">
+                <h2>Slide PDF</h2>
+                <input type="file" id="pdfFile" accept="application/pdf" />
+                <div class="pdf-toolbar">
+                    <button id="pdfPrev">&laquo; Trước</button>
+                    <span class="pdf-page-info">Trang <span id="pdfPageNum">-</span>/<span id="pdfPageCount">-</span></span>
+                    <button id="pdfNext">Sau &raquo;</button>
                 </div>
-
-                <div id="quickCheck" class="quick-check hidden">
-                    <button id="triggerCheck">Kiểm tra nhanh xem bạn hiểu đúng chưa?</button>
-                    <div class="small-note">Tuỳ chọn — có thể bỏ qua (G8).</div>
+                <div id="pdfViewerWrap" class="pdf-viewer">
+                    <canvas id="pdfCanvas"></canvas>
+                    <div id="pdfTextLayer" class="textLayer"></div>
                 </div>
-                <div id="noEvidenceNote" class="no-evidence-note hidden">
-                    ❌ Turn này không có đoạn tài liệu rõ ràng (<code>citations=[]</code>) — không thể tạo bài kiểm tra nhanh cho phần này (lớp ①, xem spec §5).
-                </div>
+                <div class="small-note">Bôi đen đoạn văn trên slide rồi bấm nút bên dưới để dùng làm ngữ cảnh.</div>
+                <button id="pdfAskAI" class="hidden">Dùng đoạn đã bôi đen làm ngữ cảnh</button>
             </div>
 
-            <div class="panel student-panel">
-                <h2>Trả lời của học viên</h2>
-                <label>Đoạn tài liệu tham chiếu (tự động):</label>
-                <textarea id="refText" readonly placeholder="Đoạn gốc dùng để sinh câu hỏi / chấm"></textarea>
+            <div class="panel assistant-panel">
+                <h2>Trợ lý học tập</h2>
 
-                <label>Câu hỏi kiểm tra (AI sinh):</label>
-                <textarea id="aiQuestion" readonly placeholder="Nhấn 'Kiểm tra nhanh' để sinh câu hỏi"></textarea>
+                <label>Ngữ cảnh đang dùng (tự động từ PDF/demo, hoặc gõ tay):</label>
+                <textarea id="refText" class="ref-context" placeholder="Dán/gõ đoạn tài liệu tham chiếu vào đây, hoặc bôi đen một đoạn trên PDF bên trái..."></textarea>
 
-                <label>Trả lời của học viên (1-2 câu):</label>
-                <textarea id="studentAnswer" placeholder="Viết câu trả lời bằng lời của bạn..."></textarea>
-
-                <label>Test nhanh case golden set (điền sẵn để mock test lớp ②③④):</label>
-                <div class="presets" id="presets">
-                    <button type="button" class="preset-btn" data-preset="vague">② Mơ hồ</button>
-                    <button type="button" class="preset-btn" data-preset="offscope">③ Đòi điểm</button>
-                    <button type="button" class="preset-btn" data-preset="misconception">④ Sai bản chất</button>
-                    <button type="button" class="preset-btn" data-preset="correct">✅ Hiểu đúng</button>
+                <div id="assistantMessages" class="assistant-messages">
+                    <div class="chatMsg role-sys"><div class="text">Chọn ngữ cảnh (PDF, demo, hoặc gõ tay) rồi hỏi tự do, tóm tắt, hoặc kiểm tra hiểu bài bên dưới.</div></div>
                 </div>
 
-                <div class="buttons">
-                    <button id="submitAnswer">Nộp trả lời</button>
-                    <button id="resetCheck">Bỏ qua / Đặt lại</button>
+                <div id="pendingCheckBar" class="pending-check-bar hidden">
+                    <span id="pendingCheckText">🧪 Đang chờ bạn trả lời câu hỏi kiểm tra ở trên...</span>
+                    <button id="cancelCheck">Hủy</button>
+                </div>
+
+                <div class="quick-actions">
+                    <button id="actSummarize">Tóm tắt / giải thích</button>
+                    <button id="actCheck">Kiểm tra hiểu bài</button>
+                    <button id="actQuiz">Tạo quiz (5 câu)</button>
+                    <button id="actRecall">Active recall (flashcard)</button>
+                    <button id="actMockTest">Ôn thi mock test (8 câu, 5 phút)</button>
+                    <button id="actDailyReport">Báo cáo hôm nay</button>
+                    <button id="actAssessProgress">Đánh giá trải nghiệm học tập</button>
+                </div>
+
+                <div class="chat-input-row">
+                    <input type="text" id="chatInput" placeholder="Nhập câu hỏi hoặc câu trả lời..." />
+                    <button id="chatSend">Gửi</button>
                 </div>
 
                 <div class="settings">
-                    <input id="apiKey" type="hidden" />
-                    <div id="apiKeyStatus" class="key-status">🔑 Đang kiểm tra key từ .env...</div>
                     <label><input type="checkbox" id="enableLogs" /> Lưu log lần chạy (local)</label>
+                    <div class="small-note" style="text-align:left; margin-top:10px;">LLM Provider: Google Gemini (gemini-3.1-flash-lite) — via Backend</div>
+                    <button id="downloadLogs" class="hidden" style="margin-top:10px;">Tải logs (JSON)</button>
+                </div>
+
+                <div class="misconceptions-panel">
+                    <h3>Hồ sơ hiểu lầm (phiên này) <span id="misconceptionCount" class="mc-count">0</span></h3>
+                    <div id="misconceptionList" class="misconception-list">
+                        <div class="small-note" style="text-align:left;">Chưa phát hiện hiểu lầm nào trong phiên này.</div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="panel result-panel">
-                <h2>Kết quả chấm AI</h2>
-                <div id="gradingResult" class="result">Chưa có kết quả chấm.</div>
-                <div id="explainArea" class="explain"></div>
-                <div class="buttons">
-                    <button id="downloadLogs" class="hidden">Tải logs (JSON)</button>
+        <div class="columns single-col">
+            <div class="panel chat-panel demo-panel">
+                <h2>Thư viện hội thoại mẫu (demo, chỉ để nạp ngữ cảnh test nhanh)</h2>
+                <label>Chọn conversation demo:</label>
+                <select id="demoSelect" aria-label="Chọn conversation demo">
+                    <option value="case1">C0025 T0708 — Happy path (có citations)</option>
+                    <option value="case2">C0096 T0558 — Edge case (mơ hồ)</option>
+                    <option value="case3">C0063 T0849 — Tutor kiểm tra (lớp 4)</option>
+                    <option value="case4">C0220 T0939 — Không có citations (lớp 1)</option>
+                    <option value="case5">C0025 T0708 — Happy path (teencode)</option>
+                    <option value="case6">C0096 T0558 — Unauthorized (xin đáp án)</option>
+                    <option value="case7">C0063 T0849 — Hallucination (ngoài tài liệu)</option>
+                    <option value="case8">C0220 T0939 — Hậu quả thật (sai kiến thức)</option>
+                </select>
+                <div id="difficultyBadge" class="badge-difficulty hidden">Lớp: <span id="layerNum"></span></div>
+
+                <div id="demoChatArea" class="chatArea">
+                    <!-- messages inserted here -->
                 </div>
             </div>
         </div>
 
         <hr />
-        <p class="note">Ghi chú: Đây là prototype Mock theo spec §4 — UI + data hội thoại lấy nguyên văn từ chatlog
-            thật (dán cứng), lõi sinh câu hỏi + chấm là AI call thật khi dán API key, có fallback mô phỏng khi không
-            có key để mock test được ngay. Case 3 minh hoạ lớp ① (không đủ căn cứ); dùng nút preset để mock test lớp
-            ②③④ trên case 1/2 mà không cần gõ tay.</p>
-
-        <hr />
-        <div class="panel golden-panel">
-            <h2>Golden set — 20 case (spec §7)</h2>
-            <p class="small-note">Chạy toàn bộ 20 case của golden set qua đúng logic chấm đang dùng ở trên (fallback
-                mô phỏng nếu không có API key, gọi AI thật tuần tự nếu có key). Kết quả so với cột "Kỳ vọng" lấy
-                nguyên từ bảng golden set trong <code>03-ai-spec.md</code> §7.</p>
-            <div class="buttons">
-                <button id="runGoldenSet">▶ Chạy toàn bộ (dùng key nếu có)</button>
-                <button id="downloadGoldenResults" class="hidden">Tải kết quả (JSON) → eval/</button>
-            </div>
-            <div id="goldenSummary" class="golden-summary"></div>
-            <div class="table-wrap">
-                <table id="goldenTable" class="golden-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Nguồn</th>
-                            <th>Lớp</th>
-                            <th>Loại</th>
-                            <th>Input tóm tắt</th>
-                            <th>Kỳ vọng</th>
-                            <th>Thực tế</th>
-                            <th>Đạt?</th>
-                        </tr>
-                    </thead>
-                    <tbody id="goldenTableBody"></tbody>
-                </table>
-            </div>
-        </div>
+        <p class="note">Ghi chú: Đây là prototype CP2 — kết quả có thể là dữ liệu giả để minh họa flow (không cần AI cho
+            CP2).</p>
     </div>
 
-    <script src="env.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="prompts.js"></script>
     <script src="app.js"></script>
 </body>
 
