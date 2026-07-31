@@ -10,62 +10,88 @@
 
 <body>
     <div class="container">
-        <h1>CP2 — VLearn: Bôi đen + Hỏi (Prototype)</h1>
+        <h1>CP2 — VLearn: Trợ lý học tập (Prototype)</h1>
 
-        <div class="columns three-cols">
-            <div class="panel chat-panel">
-                <h2>Hội thoại (mô phỏng)</h2>
+        <div class="columns top-row">
+            <div class="panel pdf-panel">
+                <h2>Slide PDF</h2>
+                <input type="file" id="pdfFile" accept="application/pdf" />
+                <div class="pdf-toolbar">
+                    <button id="pdfPrev">&laquo; Trước</button>
+                    <span class="pdf-page-info">Trang <span id="pdfPageNum">-</span>/<span id="pdfPageCount">-</span></span>
+                    <button id="pdfNext">Sau &raquo;</button>
+                </div>
+                <div id="pdfViewerWrap" class="pdf-viewer">
+                    <canvas id="pdfCanvas"></canvas>
+                    <div id="pdfTextLayer" class="textLayer"></div>
+                </div>
+                <div class="small-note">Bôi đen đoạn văn trên slide rồi bấm nút bên dưới để dùng làm ngữ cảnh.</div>
+                <button id="pdfAskAI" class="hidden">Dùng đoạn đã bôi đen làm ngữ cảnh</button>
+            </div>
+
+            <div class="panel assistant-panel">
+                <h2>Trợ lý học tập</h2>
+
+                <label>Ngữ cảnh đang dùng (tự động từ PDF/demo, hoặc gõ tay):</label>
+                <textarea id="refText" class="ref-context" placeholder="Dán/gõ đoạn tài liệu tham chiếu vào đây, hoặc bôi đen một đoạn trên PDF bên trái..."></textarea>
+
+                <div id="assistantMessages" class="assistant-messages">
+                    <div class="chatMsg role-sys"><div class="text">Chọn ngữ cảnh (PDF, demo, hoặc gõ tay) rồi hỏi tự do, tóm tắt, hoặc kiểm tra hiểu bài bên dưới.</div></div>
+                </div>
+
+                <div id="pendingCheckBar" class="pending-check-bar hidden">
+                    <span id="pendingCheckText">🧪 Đang chờ bạn trả lời câu hỏi kiểm tra ở trên...</span>
+                    <button id="cancelCheck">Hủy</button>
+                </div>
+
+                <div class="quick-actions">
+                    <button id="actSummarize">Tóm tắt / giải thích</button>
+                    <button id="actCheck">Kiểm tra hiểu bài</button>
+                    <button id="actQuiz">Tạo quiz (5 câu)</button>
+                    <button id="actRecall">Active recall (flashcard)</button>
+                    <button id="actMockTest">Ôn thi mock test (8 câu, 5 phút)</button>
+                    <button id="actDailyReport">Báo cáo hôm nay</button>
+                    <button id="actAssessProgress">Đánh giá trải nghiệm học tập</button>
+                </div>
+
+                <div class="chat-input-row">
+                    <input type="text" id="chatInput" placeholder="Nhập câu hỏi hoặc câu trả lời..." />
+                    <button id="chatSend">Gửi</button>
+                </div>
+
+                <div class="settings">
+                    <label><input type="checkbox" id="enableLogs" /> Lưu log lần chạy (local)</label>
+                    <div class="small-note" style="text-align:left; margin-top:10px;">LLM Provider: Google Gemini (gemini-3.1-flash-lite) — via Backend</div>
+                    <button id="downloadLogs" class="hidden" style="margin-top:10px;">Tải logs (JSON)</button>
+                </div>
+
+                <div class="misconceptions-panel">
+                    <h3>Hồ sơ hiểu lầm (phiên này) <span id="misconceptionCount" class="mc-count">0</span></h3>
+                    <div id="misconceptionList" class="misconception-list">
+                        <div class="small-note" style="text-align:left;">Chưa phát hiện hiểu lầm nào trong phiên này.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="columns single-col">
+            <div class="panel chat-panel demo-panel">
+                <h2>Thư viện hội thoại mẫu (demo, chỉ để nạp ngữ cảnh test nhanh)</h2>
                 <label>Chọn conversation demo:</label>
                 <select id="demoSelect" aria-label="Chọn conversation demo">
                     <option value="case1">C0025 T0708 — Happy path (có citations)</option>
                     <option value="case2">C0096 T0558 — Edge case (mơ hồ)</option>
                     <option value="case3">C0063 T0849 — Tutor kiểm tra (lớp 4)</option>
                     <option value="case4">C0220 T0939 — Không có citations (lớp 1)</option>
+                    <option value="case5">C0025 T0708 — Happy path (teencode)</option>
+                    <option value="case6">C0096 T0558 — Unauthorized (xin đáp án)</option>
+                    <option value="case7">C0063 T0849 — Hallucination (ngoài tài liệu)</option>
+                    <option value="case8">C0220 T0939 — Hậu quả thật (sai kiến thức)</option>
                 </select>
                 <div id="difficultyBadge" class="badge-difficulty hidden">Lớp: <span id="layerNum"></span></div>
 
-                <div id="chatArea" class="chatArea">
+                <div id="demoChatArea" class="chatArea">
                     <!-- messages inserted here -->
-                </div>
-
-                <div id="quickCheck" class="quick-check hidden">
-                    <button id="triggerCheck">Kiểm tra nhanh xem bạn hiểu đúng chưa?</button>
-                    <div class="small-note">Tuỳ chọn — có thể bỏ qua.</div>
-                </div>
-            </div>
-
-            <div class="panel student-panel">
-                <h2>Trả lời của học viên</h2>
-                <label>Đoạn tài liệu tham chiếu (tự động):</label>
-                <textarea id="refText" readonly placeholder="Đoạn gốc dùng để sinh câu hỏi / chấm"></textarea>
-
-                <label>Câu hỏi kiểm tra (AI sinh):</label>
-                <textarea id="aiQuestion" readonly placeholder="Nhấn 'Kiểm tra nhanh' để sinh câu hỏi"></textarea>
-
-                <label>Trả lời của học viên (1-2 câu):</label>
-                <textarea id="studentAnswer" placeholder="Viết câu trả lời bằng lời của bạn..."></textarea>
-
-                <div class="buttons">
-                    <button id="submitAnswer">Nộp trả lời</button>
-                    <button id="resetCheck">Bỏ qua / Đặt lại</button>
-                </div>
-
-                <div class="settings">
-                    <label><input type="checkbox" id="enableLogs" /> Lưu log lần chạy (local)</label>
-                    <div class="small-note" style="text-align:left; margin-top:10px;">LLM Provider: OpenRouter (Google Gemma 4 31B Free) — via Backend</div>
-                </div>
-            </div>
-
-            <div class="panel result-panel">
-                <h2>Kết quả chấm AI</h2>
-                <div id="gradingResult" class="result">Chưa có kết quả chấm.</div>
-                <div id="explainArea" class="explain"></div>
-                <div id="traceArea" class="trace hidden">
-                    <strong>AI Trace:</strong> <span id="traceContent"></span>
-                </div>
-                <div class="buttons">
-                    <button id="retryAnswer" class="hidden">Trả lời lại</button>
-                    <button id="downloadLogs" class="hidden">Tải logs (JSON)</button>
                 </div>
             </div>
         </div>
@@ -75,6 +101,7 @@
             CP2).</p>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="prompts.js"></script>
     <script src="app.js"></script>
 </body>

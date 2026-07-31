@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check app.js)",
+      "Bash(node -e ' *)",
+      "Bash(node --check prompts.js)",
+      "Bash(git status *)",
+      "Bash(node -e *)",
+      "Bash(node --check server.js)",
+      "Bash(node --check eval/run-golden-set.js)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}
